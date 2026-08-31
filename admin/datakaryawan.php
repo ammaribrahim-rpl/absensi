@@ -14,27 +14,18 @@ $username = $_SESSION['username'];
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Data Karyawan — Absensi</title>
     <link rel="icon" href="../img/Fevicon.png" type="image/png">
+    <!-- CSS -->
+    <link href="../css/font-face.css" rel="stylesheet">
+    <link href="../vendors/fontawesome/css/all.min.css" rel="stylesheet">
+    <link href="../vendor/bootstrap-4.1/bootstrap.min.css" rel="stylesheet">
+    <link href="../vendor/perfect-scrollbar/perfect-scrollbar.css" rel="stylesheet">
+    <link href="../css/theme.css" rel="stylesheet">
+    <link href="../css/modern-custom.css" rel="stylesheet">
 
-    <!-- Fontfaces CSS-->
-    <link href="../css/font-face.css" rel="stylesheet" media="all">
-    <link href="../vendor/font-awesome-4.7/css/font-awesome.min.css" rel="stylesheet" media="all">
-    <link href="../vendors/fontawesome/css/all.min.css" rel="stylesheet" media="all">
-    <link href="../vendor/mdi-font/css/material-design-iconic-font.min.css" rel="stylesheet" media="all">
-
-    <!-- Bootstrap CSS-->
-    <link href="../vendor/bootstrap-4.1/bootstrap.min.css" rel="stylesheet" media="all">
-
-    <!-- Vendor CSS-->
-    <link href="../vendor/perfect-scrollbar/perfect-scrollbar.css" rel="stylesheet" media="all">
-
-    <!-- Main CSS-->
-    <link href="../css/theme.css" rel="stylesheet" media="all">
-    <link href="../css/modern-custom.css" rel="stylesheet" media="all">
 </head>
 
 <body>
-    <div class="page-wrapper">
-        <!-- HEADER MOBILE-->
+    <div class="page-wrapper">        <!-- HEADER MOBILE -->
         <header class="header-mobile d-block d-lg-none">
             <div class="header-mobile__bar">
                 <div class="container-fluid">
@@ -51,7 +42,7 @@ $username = $_SESSION['username'];
             <nav class="navbar-mobile">
                 <div class="container-fluid">
                     <ul class="navbar-mobile__list list-unstyled">
-                        <li><a href="admin.php"><i class="fas fa-home"></i> Beranda</a></li>
+                        <li><a href="admin.php"><i class="fas fa-home"></i> Beranda Admin</a></li>
                         <li class="active"><a href="datakaryawan.php"><i class="fas fa-users"></i> Data Karyawan</a></li>
                         <li><a href="datajabatan.php"><i class="fas fa-briefcase"></i> Data Jabatan</a></li>
                         <li><a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
@@ -59,9 +50,9 @@ $username = $_SESSION['username'];
                 </div>
             </nav>
         </header>
-        <!-- END HEADER MOBILE-->
+        <!-- END HEADER MOBILE -->
 
-        <!-- MENU SIDEBAR-->
+        <!-- MENU SIDEBAR -->
         <aside class="menu-sidebar d-none d-lg-block">
             <div class="logo">
                 <a href="admin.php">
@@ -71,39 +62,38 @@ $username = $_SESSION['username'];
             <div class="menu-sidebar__content js-scrollbar1">
                 <nav class="navbar-sidebar">
                     <ul class="list-unstyled navbar__list">
-                        <li><a href="admin.php"><i class="fas fa-home"></i> Beranda</a></li>
-                        <li class="active"><a href="datakaryawan.php"><i class="fas fa-users"></i> Data Karyawan</a></li>
-                        <li><a href="datajabatan.php"><i class="fas fa-briefcase"></i> Data Jabatan</a></li>
-                        <li><a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                    <li><a href="admin.php"><i class="fas fa-home"></i> Beranda Admin</a></li>
+                    <li class="active"><a href="datakaryawan.php"><i class="fas fa-users"></i> Data Karyawan</a></li>
+                    <li><a href="datajabatan.php"><i class="fas fa-briefcase"></i> Data Jabatan</a></li>
+                    <li><a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                     </ul>
                 </nav>
             </div>
         </aside>
-        <!-- END MENU SIDEBAR-->
+        <!-- END MENU SIDEBAR -->
 
         <!-- PAGE CONTAINER-->
         <div class="page-container">
-            <!-- HEADER DESKTOP-->
-            <header class="header-desktop">
+            <!-- HEADER DESKTOP -->
+            <header class="header-desktop d-none d-lg-block" style="background:#fff;border-bottom:1px solid var(--color-border);box-shadow:var(--shadow-sm);">
                 <div class="section__content section__content--p30">
                     <div class="container-fluid">
                         <div class="header-wrap">
-                            <h4>Kelola Data Karyawan</h4>
-                            <div class="header-button">
-                                <div class="account-wrap">
-                                    <div class="account-item clearfix">
-                                        <div class="content d-flex align-items-center">
-                                            <div class="avatar-initial avatar-sm mr-2"><?= strtoupper(substr($username, 0, 1)) ?></div>
-                                            <span class="font-weight-bold text-dark"><?= htmlspecialchars($username) ?></span>
-                                        </div>
-                                    </div>
+                            <div>
+                                <h4 class="font-weight-bold mb-0 text-dark">Data Karyawan</h4>
+                                <small class="text-muted">Kelola Data Karyawan</small>
+                            </div>
+                            <div class="account-item clearfix">
+                                <div class="content d-flex align-items-center">
+                                    <div class="avatar-initial avatar-sm mr-2"><?= strtoupper(substr($username, 0, 1)) ?></div>
+                                    <span class="font-weight-bold text-dark"><?= htmlspecialchars($username) ?></span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </header>
-            <!-- END HEADER DESKTOP-->
+            <!-- END HEADER DESKTOP -->
 
             <!-- MAIN CONTENT-->
             <div class="main-content">

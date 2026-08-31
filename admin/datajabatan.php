@@ -14,20 +14,19 @@ $username = $_SESSION['username'];
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Data Jabatan — Absensi</title>
     <link rel="icon" href="../img/Fevicon.png" type="image/png">
-
     <!-- CSS -->
-    <link href="../css/font-face.css" rel="stylesheet" media="all">
-    <link href="../vendors/fontawesome/css/all.min.css" rel="stylesheet" media="all">
-    <link href="../vendor/mdi-font/css/material-design-iconic-font.min.css" rel="stylesheet" media="all">
-    <link href="../vendor/bootstrap-4.1/bootstrap.min.css" rel="stylesheet" media="all">
-    <link href="../vendor/perfect-scrollbar/perfect-scrollbar.css" rel="stylesheet" media="all">
-    <link href="../css/theme.css" rel="stylesheet" media="all">
-    <link href="../css/modern-custom.css" rel="stylesheet" media="all">
+    <link href="../css/font-face.css" rel="stylesheet">
+    <link href="../vendors/fontawesome/css/all.min.css" rel="stylesheet">
+    <link href="../vendor/bootstrap-4.1/bootstrap.min.css" rel="stylesheet">
+    <link href="../vendor/perfect-scrollbar/perfect-scrollbar.css" rel="stylesheet">
+    <link href="../css/theme.css" rel="stylesheet">
+    <link href="../css/modern-custom.css" rel="stylesheet">
+
 </head>
 
 <body>
     <div class="page-wrapper">
-        <!-- HEADER MOBILE-->
+        <!-- HEADER MOBILE -->
         <header class="header-mobile d-block d-lg-none">
             <div class="header-mobile__bar">
                 <div class="container-fluid">
@@ -44,7 +43,7 @@ $username = $_SESSION['username'];
             <nav class="navbar-mobile">
                 <div class="container-fluid">
                     <ul class="navbar-mobile__list list-unstyled">
-                        <li><a href="admin.php"><i class="fas fa-home"></i> Beranda</a></li>
+                        <li><a href="admin.php"><i class="fas fa-home"></i> Beranda Admin</a></li>
                         <li><a href="datakaryawan.php"><i class="fas fa-users"></i> Data Karyawan</a></li>
                         <li class="active"><a href="datajabatan.php"><i class="fas fa-briefcase"></i> Data Jabatan</a></li>
                         <li><a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
@@ -52,8 +51,9 @@ $username = $_SESSION['username'];
                 </div>
             </nav>
         </header>
+        <!-- END HEADER MOBILE -->
 
-        <!-- MENU SIDEBAR-->
+        <!-- MENU SIDEBAR -->
         <aside class="menu-sidebar d-none d-lg-block">
             <div class="logo">
                 <a href="admin.php">
@@ -63,14 +63,16 @@ $username = $_SESSION['username'];
             <div class="menu-sidebar__content js-scrollbar1">
                 <nav class="navbar-sidebar">
                     <ul class="list-unstyled navbar__list">
-                        <li><a href="admin.php"><i class="fas fa-home"></i> Beranda</a></li>
-                        <li><a href="datakaryawan.php"><i class="fas fa-users"></i> Data Karyawan</a></li>
-                        <li class="active"><a href="datajabatan.php"><i class="fas fa-briefcase"></i> Data Jabatan</a></li>
-                        <li><a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                    <li><a href="admin.php"><i class="fas fa-home"></i> Beranda Admin</a></li>
+                    <li><a href="datakaryawan.php"><i class="fas fa-users"></i> Data Karyawan</a></li>
+                    <li class="active"><a href="datajabatan.php"><i class="fas fa-briefcase"></i> Data Jabatan</a></li>
+                    <li><a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                     </ul>
                 </nav>
             </div>
         </aside>
+        <!-- END MENU SIDEBAR -->
+
 
         <!-- PAGE CONTAINER-->
         <div class="page-container">

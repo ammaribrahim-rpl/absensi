@@ -48,8 +48,6 @@ exit;
                         <li><a href="datakaryawan.php"><i class="fas fa-users"></i> Data Karyawan</a></li>
                         <li><a href="datauser.php"><i class="fas fa-user-shield"></i> Data User</a></li>
                         <li><a href="datajabatan.php"><i class="fas fa-briefcase"></i> Data Jabatan</a></li>
-                        <li class="active"><a href="data_absen.php"><i class="fas fa-calendar-check"></i> Data Absen</a></li>
-                        <li><a href="data_keterangan.php"><i class="fas fa-file-medical"></i> Data Keterangan</a></li>
                         <li><a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                     </ul>
                 </div>
@@ -70,8 +68,6 @@ exit;
                         <li><a href="datakaryawan.php"><i class="fas fa-users"></i> Data Karyawan</a></li>
                         <li><a href="datauser.php"><i class="fas fa-user-shield"></i> Data User</a></li>
                         <li><a href="datajabatan.php"><i class="fas fa-briefcase"></i> Data Jabatan</a></li>
-                        <li class="active"><a href="data_absen.php"><i class="fas fa-calendar-check"></i> Data Absen</a></li>
-                        <li><a href="data_keterangan.php"><i class="fas fa-file-medical"></i> Data Keterangan</a></li>
                         <li><a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                     </ul>
                 </nav>

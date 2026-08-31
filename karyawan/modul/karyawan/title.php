@@ -28,6 +28,19 @@ if (!empty($id_karyawan)) {
 }
 $tgl_masuk_display  = getFormattedTglMasuk($tgl_masuk_karyawan);
 $masa_kerja_display = hitungMasaKerja($tgl_masuk_karyawan);
+
+// Notifikasi count
+$notif_count = 0;
+$stmt_notif = mysqli_prepare($koneksi, "SELECT COUNT(*) as cnt FROM tb_notifikasi WHERE id_karyawan=? AND dibaca=0");
+if ($stmt_notif) {
+    mysqli_stmt_bind_param($stmt_notif, 's', $id_karyawan);
+    mysqli_stmt_execute($stmt_notif);
+    $res_notif = mysqli_stmt_get_result($stmt_notif);
+    if ($rn = mysqli_fetch_assoc($res_notif)) {
+        $notif_count = (int) $rn['cnt'];
+    }
+    mysqli_stmt_close($stmt_notif);
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -40,11 +53,29 @@ $masa_kerja_display = hitungMasaKerja($tgl_masuk_karyawan);
     <!-- CSS -->
     <link href="../css/font-face.css" rel="stylesheet" media="all">
     <link href="../vendors/fontawesome/css/all.min.css" rel="stylesheet" media="all">
-    <link href="../vendor/mdi-font/css/material-design-iconic-font.min.css" rel="stylesheet" media="all">
     <link href="../vendor/bootstrap-4.1/bootstrap.min.css" rel="stylesheet" media="all">
     <link href="../vendor/perfect-scrollbar/perfect-scrollbar.css" rel="stylesheet" media="all">
     <link href="../css/theme.css" rel="stylesheet" media="all">
     <link href="../css/modern-custom.css" rel="stylesheet" media="all">
+    <style>
+        .notif-bell-wrapper {
+            position: relative;
+            display: inline-flex;
+        }
+        .notif-badge {
+            position: absolute;
+            top: -4px; right: -4px;
+            background: #dc2626;
+            color: #fff;
+            font-size: 0.6rem;
+            font-weight: 700;
+            min-width: 16px; height: 16px;
+            border-radius: 99px;
+            display: flex; align-items: center; justify-content: center;
+            line-height: 1;
+            padding: 0 3px;
+        }
+    </style>
 </head>
 
 <body>
@@ -57,9 +88,17 @@ $masa_kerja_display = hitungMasaKerja($tgl_masuk_karyawan);
                         <a href="index.php?m=awal" class="logo">
                             <h3><i class="fas fa-fingerprint mr-2"></i>ABSENSI</h3>
                         </a>
-                        <button class="hamburger" type="button">
-                            <i class="fas fa-bars"></i>
-                        </button>
+                        <div class="d-flex align-items-center gap-2">
+                            <a href="notifikasi.php" class="notif-bell-wrapper mr-3" style="color:#fff;">
+                                <i class="fas fa-bell" style="font-size:1.2rem;"></i>
+                                <?php if ($notif_count > 0): ?>
+                                <span class="notif-badge"><?= $notif_count ?></span>
+                                <?php endif; ?>
+                            </a>
+                            <button class="hamburger" type="button">
+                                <i class="fas fa-bars"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -68,7 +107,7 @@ $masa_kerja_display = hitungMasaKerja($tgl_masuk_karyawan);
                     <ul class="navbar-mobile__list list-unstyled">
                         <li><a href="index.php?m=awal"><i class="fas fa-calendar-check"></i> Absensi</a></li>
                         <li class="active"><a href="index.php?m=karyawan&s=title"><i class="fas fa-file-medical"></i> Izin / Cuti</a></li>
-
+                        <li><a href="notifikasi.php"><i class="fas fa-bell"></i> Notifikasi <?php if ($notif_count > 0) echo "<span class='badge badge-danger ml-1'>$notif_count</span>"; ?></a></li>
                         <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                     </ul>
                 </div>
@@ -87,7 +126,14 @@ $masa_kerja_display = hitungMasaKerja($tgl_masuk_karyawan);
                     <ul class="list-unstyled navbar__list">
                         <li><a href="index.php?m=awal"><i class="fas fa-calendar-check"></i> Absensi Harian</a></li>
                         <li class="active"><a href="index.php?m=karyawan&s=title"><i class="fas fa-file-medical"></i> Pengajuan Izin / Cuti</a></li>
-
+                        <li>
+                            <a href="notifikasi.php">
+                                <i class="fas fa-bell"></i> Notifikasi
+                                <?php if ($notif_count > 0): ?>
+                                <span class="badge badge-danger ml-auto" style="font-size:0.68rem;"><?= $notif_count ?></span>
+                                <?php endif; ?>
+                            </a>
+                        </li>
                         <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                     </ul>
                 </nav>
@@ -103,10 +149,18 @@ $masa_kerja_display = hitungMasaKerja($tgl_masuk_karyawan);
                             <div>
                                 <h4 class="font-weight-bold mb-0 text-dark">Pengajuan Keterangan</h4>
                             </div>
-                            <div class="account-item clearfix">
-                                <div class="content d-flex align-items-center">
-                                    <div class="avatar-initial avatar-sm mr-2" style="background: linear-gradient(135deg, #10b981, #059669);"><?= $initial ?></div>
-                                    <span class="font-weight-bold text-dark"><?= htmlspecialchars($nama) ?></span>
+                            <div class="d-flex align-items-center">
+                                <a href="notifikasi.php" class="notif-bell-wrapper mr-4" style="color:#4b5563;">
+                                    <i class="fas fa-bell" style="font-size:1.1rem;"></i>
+                                    <?php if ($notif_count > 0): ?>
+                                    <span class="notif-badge"><?= $notif_count ?></span>
+                                    <?php endif; ?>
+                                </a>
+                                <div class="account-item clearfix">
+                                    <div class="content d-flex align-items-center">
+                                        <div class="avatar-initial avatar-sm mr-2" style="background: linear-gradient(135deg, #10b981, #059669);"><?= $initial ?></div>
+                                        <span class="font-weight-bold text-dark"><?= htmlspecialchars($nama) ?></span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -130,10 +184,10 @@ $masa_kerja_display = hitungMasaKerja($tgl_masuk_karyawan);
                                 </a>
                             </div>
 
-                            <form action="modul/karyawan/keterangan_sv.php" method="POST">
+                            <form action="modul/karyawan/keterangan_sv.php" method="POST" id="formIzinCuti">
                                 <input type="hidden" name="id_karyawan" value="<?= htmlspecialchars($id_karyawan) ?>">
                                 <input type="hidden" name="nama" value="<?= htmlspecialchars($nama) ?>">
-                                <input type="hidden" name="waktu" value="<?= date('l, d-m-Y h:i:s a') ?>">
+                                <input type="hidden" name="waktu" value="<?= date('l, d-m-Y H:i:s') ?>">
 
                                 <div class="row">
                                     <div class="col-md-6 form-group">
@@ -149,11 +203,29 @@ $masa_kerja_display = hitungMasaKerja($tgl_masuk_karyawan);
 
                                 <div class="form-group">
                                     <label class="font-weight-bold text-muted small">KATEGORI KETERANGAN</label>
-                                    <select name="keterangan" class="form-control" required>
+                                    <select name="keterangan" id="selectKategori" class="form-control" required>
                                         <option value="">-- Pilih Kategori --</option>
                                         <option value="Izin">Izin</option>
                                         <option value="Cuti">Cuti</option>
                                     </select>
+                                </div>
+
+                                <!-- WAKTU CUTI & IZIN (MULAI - SELESAI) -->
+                                <div class="row">
+                                    <div class="col-md-6 form-group">
+                                        <label class="font-weight-bold text-muted small">TANGGAL MULAI</label>
+                                        <input type="date" name="tgl_mulai" id="tglMulai" class="form-control" value="<?= date('Y-m-d') ?>" required>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label class="font-weight-bold text-muted small">TANGGAL SELESAI</label>
+                                        <input type="date" name="tgl_selesai" id="tglSelesai" class="form-control" value="<?= date('Y-m-d') ?>" required>
+                                    </div>
+                                </div>
+
+                                <!-- KOTAK ESTIMASI DURASI -->
+                                <div id="infoDurasi" class="alert alert-info py-2 px-3 small font-weight-bold mb-3 d-flex align-items-center">
+                                    <i class="fas fa-calendar-check mr-2 fa-lg text-primary"></i>
+                                    <span id="durasiText">Durasi: 1 Hari (<?= date('d/m/Y') ?>)</span>
                                 </div>
 
                                 <div class="form-group">
@@ -187,5 +259,63 @@ $masa_kerja_display = hitungMasaKerja($tgl_masuk_karyawan);
     <script src="../vendor/bootstrap-4.1/bootstrap.min.js"></script>
     <script src="../vendor/perfect-scrollbar/perfect-scrollbar.js"></script>
     <script src="../js/main.js"></script>
+    <script>
+    function hitungDurasi() {
+        const mulaiVal = document.getElementById('tglMulai').value;
+        const selesaiVal = document.getElementById('tglSelesai').value;
+        const infoEl = document.getElementById('infoDurasi');
+        const textEl = document.getElementById('durasiText');
+        const kategori = document.getElementById('selectKategori').value || 'Izin/Cuti';
+
+        if (!mulaiVal || !selesaiVal) return;
+
+        const dMulai = new Date(mulaiVal);
+        const dSelesai = new Date(selesaiVal);
+
+        if (dSelesai < dMulai) {
+            infoEl.className = 'alert alert-danger py-2 px-3 small font-weight-bold mb-3 d-flex align-items-center';
+            textEl.innerHTML = '⚠️ Tanggal selesai tidak boleh lebih awal dari tanggal mulai!';
+            return;
+        }
+
+        const diffTime = Math.abs(dSelesai - dMulai);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+        const opt = { day: '2-digit', month: 'short', year: 'numeric' };
+        const fMulai = dMulai.toLocaleDateString('id-ID', opt);
+        const fSelesai = dSelesai.toLocaleDateString('id-ID', opt);
+
+        infoEl.className = 'alert alert-info py-2 px-3 small font-weight-bold mb-3 d-flex align-items-center';
+        if (diffDays === 1) {
+            textEl.innerHTML = `📅 Durasi ${kategori}: <strong>1 Hari</strong> (${fMulai})`;
+        } else {
+            textEl.innerHTML = `📅 Durasi ${kategori}: <strong>${diffDays} Hari</strong> (${fMulai} s/d ${fSelesai})`;
+        }
+    }
+
+    document.getElementById('tglMulai').addEventListener('change', function() {
+        // Set min tanggal selesai
+        document.getElementById('tglSelesai').min = this.value;
+        if (document.getElementById('tglSelesai').value < this.value) {
+            document.getElementById('tglSelesai').value = this.value;
+        }
+        hitungDurasi();
+    });
+
+    document.getElementById('tglSelesai').addEventListener('change', hitungDurasi);
+    document.getElementById('selectKategori').addEventListener('change', hitungDurasi);
+
+    document.getElementById('formIzinCuti').addEventListener('submit', function(e) {
+        const mulaiVal = document.getElementById('tglMulai').value;
+        const selesaiVal = document.getElementById('tglSelesai').value;
+        if (new Date(selesaiVal) < new Date(mulaiVal)) {
+            e.preventDefault();
+            alert('Tanggal selesai tidak boleh lebih awal dari tanggal mulai!');
+        }
+    });
+
+    // Run on load
+    hitungDurasi();
+    </script>
 </body>
 </html>

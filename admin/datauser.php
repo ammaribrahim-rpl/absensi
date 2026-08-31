@@ -14,15 +14,14 @@ exit;
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Data User Admin — Absensi</title>
     <link rel="icon" href="../img/Fevicon.png" type="image/png">
-
     <!-- CSS -->
-    <link href="../css/font-face.css" rel="stylesheet" media="all">
-    <link href="../vendors/fontawesome/css/all.min.css" rel="stylesheet" media="all">
-    <link href="../vendor/mdi-font/css/material-design-iconic-font.min.css" rel="stylesheet" media="all">
-    <link href="../vendor/bootstrap-4.1/bootstrap.min.css" rel="stylesheet" media="all">
-    <link href="../vendor/perfect-scrollbar/perfect-scrollbar.css" rel="stylesheet" media="all">
-    <link href="../css/theme.css" rel="stylesheet" media="all">
-    <link href="../css/modern-custom.css" rel="stylesheet" media="all">
+    <link href="../css/font-face.css" rel="stylesheet">
+    <link href="../vendors/fontawesome/css/all.min.css" rel="stylesheet">
+    <link href="../vendor/bootstrap-4.1/bootstrap.min.css" rel="stylesheet">
+    <link href="../vendor/perfect-scrollbar/perfect-scrollbar.css" rel="stylesheet">
+    <link href="../css/theme.css" rel="stylesheet">
+    <link href="../css/modern-custom.css" rel="stylesheet">
+
 </head>
 
 <body>

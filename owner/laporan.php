@@ -7,94 +7,137 @@ if (!isset($_SESSION['owner_username'])) {
 include '../koneksi.php';
 $owner_nama = $_SESSION['owner_nama'] ?? 'Owner Executive';
 
+// Handle Hapus Absen
+if (isset($_GET['hapus_absen']) && is_numeric($_GET['hapus_absen'])) {
+    $del_id = (int) $_GET['hapus_absen'];
+    $stmt_del = mysqli_prepare($koneksi, "DELETE FROM tb_absen WHERE id=?");
+    mysqli_stmt_bind_param($stmt_del, 'i', $del_id);
+    mysqli_stmt_execute($stmt_del);
+    mysqli_stmt_close($stmt_del);
+    $_SESSION['msg'] = "Data absensi berhasil dihapus.";
+    $params = $_GET; unset($params['hapus_absen']);
+    header("Location: laporan.php?" . http_build_query($params));
+    exit;
+}
+if (isset($_GET['hapus_ket']) && is_numeric($_GET['hapus_ket'])) {
+    $del_id = (int) $_GET['hapus_ket'];
+    $stmt_del = mysqli_prepare($koneksi, "DELETE FROM tb_keterangan WHERE id=?");
+    mysqli_stmt_bind_param($stmt_del, 'i', $del_id);
+    mysqli_stmt_execute($stmt_del);
+    mysqli_stmt_close($stmt_del);
+    $_SESSION['msg'] = "Data izin/cuti berhasil dihapus.";
+    $params = $_GET; unset($params['hapus_ket']);
+    header("Location: laporan.php?" . http_build_query($params));
+    exit;
+}
+
 // Parameter Filter
-$filter_kat = $_GET['kategori'] ?? 'semua';
+$filter_kat = $_GET['kategori']    ?? 'semua';
 $filter_kar = $_GET['id_karyawan'] ?? 'semua';
-$filter_per = $_GET['periode'] ?? 'semua';
-$cari       = trim($_GET['cari'] ?? '');
+$filter_per = $_GET['periode']     ?? 'semua';
+$cari       = trim($_GET['cari']   ?? '');
 
 $now = time();
 $cutoff = 0;
 $label_periode = 'Semua Waktu';
-if ($filter_per === '1pekan') {
-    $cutoff = $now - (7 * 86400);
-    $label_periode = '1 Pekan Terakhir';
-} elseif ($filter_per === '1bulan') {
-    $cutoff = $now - (30 * 86400);
-    $label_periode = '1 Bulan Terakhir';
-} elseif ($filter_per === '6bulan') {
-    $cutoff = $now - (180 * 86400);
-    $label_periode = '6 Bulan Terakhir';
-} elseif ($filter_per === '1tahun') {
-    $cutoff = $now - (365 * 86400);
-    $label_periode = '1 Tahun Terakhir';
-}
+if ($filter_per === '1pekan')     { $cutoff = $now - (7 * 86400);   $label_periode = '1 Pekan Terakhir'; }
+elseif ($filter_per === '1bulan') { $cutoff = $now - (30 * 86400);  $label_periode = '1 Bulan Terakhir'; }
+elseif ($filter_per === '6bulan') { $cutoff = $now - (180 * 86400); $label_periode = '6 Bulan Terakhir'; }
+elseif ($filter_per === '1tahun') { $cutoff = $now - (365 * 86400); $label_periode = '1 Tahun Terakhir'; }
 
-$records = [];
-$total_hadir = 0;
-$total_izin  = 0;
-$total_cuti  = 0;
+$records      = [];
+$total_hadir  = 0;
+$total_telat  = 0;
+$total_izin   = 0;
+$total_cuti   = 0;
+$total_pulang = 0;
 
-// 1. Ambil Data Absensi (Hadir)
-if ($filter_kat === 'semua' || $filter_kat === 'absen') {
-    $sql_absen = "SELECT * FROM tb_absen ORDER BY id DESC";
+// 1. Ambil Data Absensi dari tb_absen
+$kat_absen_filter = ['semua', 'absen', 'telat', 'istirahat', 'pulang'];
+if (in_array($filter_kat, $kat_absen_filter)) {
+    $sql_absen = "SELECT id, id_karyawan, nama, waktu,
+                  COALESCE(tipe_absen, 'masuk') AS tipe_absen,
+                  COALESCE(is_telat, 0) AS is_telat
+                  FROM tb_absen ORDER BY id DESC";
     $q_absen = mysqli_query($koneksi, $sql_absen);
     while ($ra = mysqli_fetch_assoc($q_absen)) {
-        $ts = parseWaktuToTimestamp($ra['waktu']);
+        $ts       = parseWaktuToTimestamp($ra['waktu']);
+        $tipe     = $ra['tipe_absen'];
+        $is_telat = (int) $ra['is_telat'];
+
         if ($cutoff > 0 && $ts < $cutoff) continue;
         if ($filter_kar !== 'semua' && $ra['id_karyawan'] !== $filter_kar) continue;
-        if (!empty($cari) && (stripos($ra['nama'], $cari) === false && stripos($ra['id_karyawan'], $cari) === false)) continue;
+        if (!empty($cari) && stripos($ra['nama'], $cari) === false && stripos($ra['id_karyawan'], $cari) === false) continue;
 
-        $total_hadir++;
+        if ($filter_kat === 'telat'     && !$is_telat) continue;
+        if ($filter_kat === 'pulang'    && $tipe !== 'pulang') continue;
+        if ($filter_kat === 'istirahat' && !in_array($tipe, ['istirahat_mulai', 'istirahat_selesai'])) continue;
+        if ($filter_kat === 'absen'     && $tipe !== 'masuk') continue;
+
+        $label_kat = match($tipe) {
+            'masuk'             => $is_telat ? 'Telat Masuk' : 'Hadir',
+            'istirahat_mulai'   => $is_telat ? 'Istirahat (Telat)' : 'Mulai Istirahat',
+            'istirahat_selesai' => $is_telat ? 'Kembali (Telat)'   : 'Kembali Istirahat',
+            'pulang'            => 'Pulang',
+            default             => 'Hadir',
+        };
+
+        if ($tipe === 'masuk') $total_hadir++;
+        if ($is_telat)         $total_telat++;
+        if ($tipe === 'pulang') $total_pulang++;
+
         $records[] = [
+            'record_id'   => (int) $ra['id'],
+            'record_type' => 'absen',
             'timestamp'   => $ts,
             'id_karyawan' => $ra['id_karyawan'],
             'nama'        => $ra['nama'],
-            'kategori'    => 'Hadir',
-            'alasan'      => 'Presensi Masuk Harian',
+            'kategori'    => $label_kat,
+            'alasan'      => 'Presensi ' . $label_kat,
             'waktu'       => $ra['waktu'],
-            'bukti'       => '-'
+            'is_telat'    => $is_telat,
         ];
     }
 }
 
 // 2. Ambil Data Keterangan (Izin & Cuti)
-if ($filter_kat === 'semua' || $filter_kat === 'izin' || $filter_kat === 'cuti') {
-    $sql_ket = "SELECT * FROM tb_keterangan ORDER BY id DESC";
-    $q_ket = mysqli_query($koneksi, $sql_ket);
+if (in_array($filter_kat, ['semua', 'izin', 'cuti'])) {
+    $q_ket = mysqli_query($koneksi, "SELECT * FROM tb_keterangan ORDER BY id DESC");
     while ($rk = mysqli_fetch_assoc($q_ket)) {
         $ts = parseWaktuToTimestamp($rk['waktu']);
         if ($cutoff > 0 && $ts < $cutoff) continue;
         if ($filter_kar !== 'semua' && $rk['id_karyawan'] !== $filter_kar) continue;
-        if (!empty($cari) && (stripos($rk['nama'], $cari) === false && stripos($rk['id_karyawan'], $cari) === false && stripos($rk['alasan'] ?? '', $cari) === false)) continue;
+        if (!empty($cari) && stripos($rk['nama'], $cari) === false && stripos($rk['id_karyawan'], $cari) === false && stripos($rk['alasan'] ?? '', $cari) === false) continue;
 
         $kat = ($rk['keterangan'] === 'Cuti' || $rk['keterangan'] === 'Sakit') ? 'Cuti' : 'Izin';
         if ($filter_kat === 'izin' && $kat !== 'Izin') continue;
         if ($filter_kat === 'cuti' && $kat !== 'Cuti') continue;
 
-        if ($kat === 'Izin') {
-            $total_izin++;
-        } else {
-            $total_cuti++;
+        ($kat === 'Izin') ? $total_izin++ : $total_cuti++;
+
+        $tgl_m = !empty($rk['tgl_mulai']) ? date('d/m/Y', strtotime($rk['tgl_mulai'])) : '';
+        $tgl_s = !empty($rk['tgl_selesai']) ? date('d/m/Y', strtotime($rk['tgl_selesai'])) : '';
+        $periode_str = '';
+        if (!empty($tgl_m) && !empty($tgl_s)) {
+            $periode_str = ($tgl_m === $tgl_s) ? $tgl_m : "$tgl_m s/d $tgl_s";
         }
 
         $records[] = [
+            'record_id'   => (int) $rk['id'],
+            'record_type' => 'keterangan',
             'timestamp'   => $ts,
             'id_karyawan' => $rk['id_karyawan'],
             'nama'        => $rk['nama'],
             'kategori'    => $kat,
             'alasan'      => $rk['alasan'] ?? '-',
             'waktu'       => $rk['waktu'],
-            'bukti'       => $rk['bukti'] ?? '-'
+            'periode'     => $periode_str,
+            'is_telat'    => 0,
         ];
     }
 }
 
-// Urutkan waktu terbaru
-usort($records, function($a, $b) {
-    return $b['timestamp'] <=> $a['timestamp'];
-});
-
+usort($records, fn($a, $b) => $b['timestamp'] <=> $a['timestamp']);
 $total_semua = count($records);
 ?>
 <!DOCTYPE html>
@@ -177,6 +220,7 @@ $total_semua = count($records);
                         <li><a href="admin_user.php"><i class="fas fa-user-shield"></i> Data Admin</a></li>
                         <li><a href="jabatan.php"><i class="fas fa-briefcase"></i> Data Jabatan</a></li>
                         <li class="active"><a href="laporan.php"><i class="fas fa-file-alt"></i> Rekap Kehadiran</a></li>
+                        <li><a href="approval.php"><i class="fas fa-check-double"></i> Approval Cuti</a></li>
                         <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout Owner</a></li>
                     </ul>
                 </div>
@@ -207,6 +251,9 @@ $total_semua = count($records);
                         </li>
                         <li class="active">
                             <a href="laporan.php"><i class="fas fa-file-alt"></i> Rekap Kehadiran</a>
+                        </li>
+                        <li>
+                            <a href="approval.php"><i class="fas fa-check-double"></i> Approval Cuti</a>
                         </li>
                         <li>
                             <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout Owner</a>
@@ -269,159 +316,205 @@ $total_semua = count($records);
                             </div>
                         </div>
 
+                        <!-- FLASH MESSAGE -->
+                        <?php if (!empty($_SESSION['msg'])): ?>
+                        <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+                            <i class="fas fa-check-circle mr-2"></i><?= htmlspecialchars($_SESSION['msg']) ?>
+                            <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
+                        </div>
+                        <?php unset($_SESSION['msg']); endif; ?>
+
                         <!-- STATISTIC COUNTER CARDS -->
                         <div class="row mb-3">
-                            <div class="col-6 col-md-3 mb-2">
-                                <div class="card p-3 h-100 border-left-success" style="border-left: 4px solid #16a34a;">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <div class="text-muted small font-weight-bold">TOTAL HADIR</div>
-                                            <h3 class="font-weight-bold text-success mb-0"><?= $total_hadir ?></h3>
-                                        </div>
-                                        <div class="avatar-initial avatar-md" style="background: #dcfce7; color: #16a34a;">
-                                            <i class="fas fa-calendar-check"></i>
-                                        </div>
-                                    </div>
+                            <div class="col-6 col-md-2 mb-2">
+                                <div class="card p-3 h-100" style="border-left:4px solid #16a34a;">
+                                    <div class="text-muted small font-weight-bold">HADIR</div>
+                                    <h3 class="font-weight-bold text-success mb-0"><?= $total_hadir ?></h3>
                                 </div>
                             </div>
-                            <div class="col-6 col-md-3 mb-2">
-                                <div class="card p-3 h-100 border-left-warning" style="border-left: 4px solid #d97706;">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <div class="text-muted small font-weight-bold">TOTAL IZIN</div>
-                                            <h3 class="font-weight-bold text-warning mb-0"><?= $total_izin ?></h3>
-                                        </div>
-                                        <div class="avatar-initial avatar-md" style="background: #fef3c7; color: #d97706;">
-                                            <i class="fas fa-file-alt"></i>
-                                        </div>
-                                    </div>
+                            <div class="col-6 col-md-2 mb-2">
+                                <div class="card p-3 h-100" style="border-left:4px solid #dc2626;">
+                                    <div class="text-muted small font-weight-bold">TELAT</div>
+                                    <h3 class="font-weight-bold mb-0" style="color:#dc2626;"><?= $total_telat ?></h3>
                                 </div>
                             </div>
-                            <div class="col-6 col-md-3 mb-2">
-                                <div class="card p-3 h-100" style="border-left: 4px solid #ea580c;">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <div class="text-muted small font-weight-bold">TOTAL CUTI</div>
-                                            <h3 class="font-weight-bold" style="color: #ea580c;"><?= $total_cuti ?></h3>
-                                        </div>
-                                        <div class="avatar-initial avatar-md" style="background: #ffedd5; color: #ea580c;">
-                                            <i class="fas fa-calendar-minus"></i>
-                                        </div>
-                                    </div>
+                            <div class="col-6 col-md-2 mb-2">
+                                <div class="card p-3 h-100" style="border-left:4px solid #0891b2;">
+                                    <div class="text-muted small font-weight-bold">PULANG</div>
+                                    <h3 class="font-weight-bold mb-0" style="color:#0891b2;"><?= $total_pulang ?></h3>
                                 </div>
                             </div>
-                            <div class="col-6 col-md-3 mb-2">
-                                <div class="card p-3 h-100" style="border-left: 4px solid #7e22ce;">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <div class="text-muted small font-weight-bold">TOTAL AKTIVITAS</div>
-                                            <h3 class="font-weight-bold" style="color: #7e22ce;"><?= $total_semua ?></h3>
-                                        </div>
-                                        <div class="avatar-initial avatar-md" style="background: #f3e8ff; color: #7e22ce;">
-                                            <i class="fas fa-chart-pie"></i>
-                                        </div>
-                                    </div>
+                            <div class="col-6 col-md-2 mb-2">
+                                <div class="card p-3 h-100" style="border-left:4px solid #d97706;">
+                                    <div class="text-muted small font-weight-bold">IZIN</div>
+                                    <h3 class="font-weight-bold text-warning mb-0"><?= $total_izin ?></h3>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-2 mb-2">
+                                <div class="card p-3 h-100" style="border-left:4px solid #ea580c;">
+                                    <div class="text-muted small font-weight-bold">CUTI</div>
+                                    <h3 class="font-weight-bold mb-0" style="color:#ea580c;"><?= $total_cuti ?></h3>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-2 mb-2">
+                                <div class="card p-3 h-100" style="border-left:4px solid #7e22ce;">
+                                    <div class="text-muted small font-weight-bold">TOTAL</div>
+                                    <h3 class="font-weight-bold mb-0" style="color:#7e22ce;"><?= $total_semua ?></h3>
                                 </div>
                             </div>
                         </div>
 
                         <!-- FILTER FORM -->
-                        <div class="card p-3 mb-4">
-                            <form method="GET" action="laporan.php" class="row align-items-end">
+                        <div class="card p-3 mb-3">
+                            <form method="GET" action="laporan.php">
                                 <input type="hidden" name="periode" value="<?= htmlspecialchars($filter_per) ?>">
-                                <div class="col-md-4 mb-2 mb-md-0">
-                                    <label class="font-weight-bold text-muted small">FILTER KATEGORI</label>
-                                    <select name="kategori" class="form-control">
-                                        <option value="semua" <?= $filter_kat === 'semua' ? 'selected' : '' ?>>-- Semua Kategori (Hadir, Izin & Cuti) --</option>
-                                        <option value="absen" <?= $filter_kat === 'absen' ? 'selected' : '' ?>>Hanya Hadir (Absensi Masuk)</option>
-                                        <option value="izin" <?= $filter_kat === 'izin' ? 'selected' : '' ?>>Hanya Izin</option>
-                                        <option value="cuti" <?= $filter_kat === 'cuti' ? 'selected' : '' ?>>Hanya Cuti</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3 mb-2 mb-md-0">
-                                    <label class="font-weight-bold text-muted small">FILTER KARYAWAN</label>
-                                    <select name="id_karyawan" class="form-control">
-                                        <option value="semua">-- Semua Karyawan --</option>
-                                        <?php
-                                        $q_kars = mysqli_query($koneksi, "SELECT id_karyawan, nama FROM tb_karyawan ORDER BY nama ASC");
-                                        while ($k = mysqli_fetch_assoc($q_kars)) {
-                                            $sel = ($filter_kar === $k['id_karyawan']) ? 'selected' : '';
-                                            echo '<option value="'.htmlspecialchars($k['id_karyawan']).'" '.$sel.'>'.htmlspecialchars($k['nama']).'</option>';
-                                        }
-                                        ?>
-                                    </select>
-                                </div>
-                                <div class="col-md-3 mb-2 mb-md-0">
-                                    <label class="font-weight-bold text-muted small">CARI KATA KUNCI</label>
-                                    <input type="text" name="cari" class="form-control" placeholder="Nama / ID / Alasan..." value="<?= htmlspecialchars($cari) ?>">
-                                </div>
-                                <div class="col-md-2">
-                                    <button type="submit" class="btn btn-primary btn-block font-weight-bold">
-                                        <i class="fas fa-filter mr-1"></i> Terapkan
-                                    </button>
+                                <div class="row align-items-end">
+                                    <div class="col-sm-6 col-lg-3 mb-2">
+                                        <label class="font-weight-bold text-muted small">FILTER KATEGORI</label>
+                                        <select name="kategori" class="form-control">
+                                            <option value="semua"     <?= $filter_kat==='semua'     ?'selected':'' ?>>-- Semua --</option>
+                                            <option value="absen"     <?= $filter_kat==='absen'     ?'selected':'' ?>>Kehadiran Masuk</option>
+                                            <option value="telat"     <?= $filter_kat==='telat'     ?'selected':'' ?>>⚠️ Telat</option>
+                                            <option value="istirahat" <?= $filter_kat==='istirahat' ?'selected':'' ?>>Istirahat</option>
+                                            <option value="pulang"    <?= $filter_kat==='pulang'    ?'selected':'' ?>>Pulang</option>
+                                            <option value="izin"      <?= $filter_kat==='izin'      ?'selected':'' ?>>Izin</option>
+                                            <option value="cuti"      <?= $filter_kat==='cuti'      ?'selected':'' ?>>Cuti</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-6 col-lg-3 mb-2">
+                                        <label class="font-weight-bold text-muted small">FILTER KARYAWAN</label>
+                                        <select name="id_karyawan" class="form-control">
+                                            <option value="semua">-- Semua Karyawan --</option>
+                                            <?php
+                                            $q_kars = mysqli_query($koneksi, "SELECT id_karyawan, nama FROM tb_karyawan ORDER BY nama ASC");
+                                            while ($k = mysqli_fetch_assoc($q_kars)) {
+                                                $sel = ($filter_kar === $k['id_karyawan']) ? 'selected' : '';
+                                                echo '<option value="'.htmlspecialchars($k['id_karyawan']).'" '.$sel.'>'.htmlspecialchars($k['nama']).'</option>';
+                                            }
+                                            ?>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-8 col-lg-4 mb-2">
+                                        <label class="font-weight-bold text-muted small">CARI</label>
+                                        <input type="text" name="cari" class="form-control" placeholder="Nama / ID / Alasan..." value="<?= htmlspecialchars($cari) ?>">
+                                    </div>
+                                    <div class="col-sm-4 col-lg-2 mb-2">
+                                        <button type="submit" class="btn btn-primary btn-block font-weight-bold">
+                                            <i class="fas fa-filter mr-1"></i> Filter
+                                        </button>
+                                    </div>
                                 </div>
                             </form>
                         </div>
 
                         <!-- TABEL REKAP KEHADIRAN -->
                         <div class="card p-3">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                                 <div>
-                                    <h5 class="font-weight-bold text-dark mb-0">Hasil Rekap Kehadiran (<?= count($records) ?> Catatan)</h5>
-                                    <small class="text-muted">Kurun waktu: <strong><?= $label_periode ?></strong> | Kategori: <strong><?= strtoupper($filter_kat) ?></strong></small>
+                                    <h5 class="font-weight-bold text-dark mb-0">Rekap Kehadiran (<?= count($records) ?> Catatan)</h5>
+                                    <small class="text-muted">Periode: <strong><?= $label_periode ?></strong> | Filter: <strong><?= strtoupper($filter_kat) ?></strong></small>
                                 </div>
+                                <?php if ($filter_kat==='telat'): ?>
+                                <span class="badge badge-danger" style="font-size:0.78rem;padding:6px 12px;"><i class="fas fa-exclamation-triangle mr-1"></i> Menampilkan data keterlambatan</span>
+                                <?php endif; ?>
                             </div>
                             <div class="table-responsive">
                                 <table class="table">
                                     <thead>
                                         <tr>
-                                            <th>No</th>
-                                            <th>Tanggal Masuk / ID</th>
+                                            <th style="width:40px;">No</th>
                                             <th>Nama Karyawan</th>
                                             <th class="text-center">Kategori</th>
-                                            <th>Keterangan / Alasan</th>
-                                            <th>Waktu Dicatat</th>
+                                            <th>Keterangan</th>
+                                            <th>Tanggal &amp; Waktu</th>
+                                            <th class="text-center" style="width:70px;">Hapus</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php
-                                        if (empty($records)):
-                                        ?>
+                                        <?php if (empty($records)): ?>
                                         <tr>
-                                            <td colspan="6" class="text-center py-4 text-muted">
-                                                <i class="fas fa-inbox fa-2x mb-2 d-block text-muted" style="opacity: 0.4;"></i>
-                                                Tidak ada data kehadiran yang sesuai dengan filter.
+                                            <td colspan="7" class="text-center py-5 text-muted">
+                                                <i class="fas fa-inbox fa-2x mb-2 d-block" style="opacity:0.3;"></i>
+                                                Tidak ada data yang sesuai filter.
                                             </td>
                                         </tr>
-                                        <?php
-                                        endif;
-                                        $no = 1;
-                                        foreach ($records as $row):
-                                            $b_class = ($row['kategori'] === 'Hadir') ? 'badge-hadir' : (($row['kategori'] === 'Cuti') ? 'badge-cuti' : 'badge-izin');
-                                            $ic = ($row['kategori'] === 'Hadir') ? 'fa-calendar-check' : (($row['kategori'] === 'Cuti') ? 'fa-calendar-minus' : 'fa-file-alt');
+                                        <?php endif; ?>
+                                        <?php $no = 1; foreach ($records as $row):
+                                            // Badge class
+                                            $is_late = !empty($row['is_telat']);
+                                            $kat     = $row['kategori'];
+                                            if ($is_late)                       $b_class = 'badge-telat';
+                                            elseif ($kat === 'Hadir')           $b_class = 'badge-absen';
+                                            elseif (str_contains($kat,'Istirahat') || str_contains($kat,'Kembali')) $b_class = 'badge-istirahat';
+                                            elseif ($kat === 'Pulang')          $b_class = 'badge-pulang';
+                                            elseif ($kat === 'Cuti')            $b_class = 'badge-cuti';
+                                            else                                $b_class = 'badge-izin';
+                                            // Icon
+                                            $ic = match(true) {
+                                                str_contains($kat,'Masuk') || $kat==='Hadir' => 'fa-sign-in-alt',
+                                                str_contains($kat,'Istirahat')               => 'fa-utensils',
+                                                str_contains($kat,'Kembali')                 => 'fa-undo',
+                                                $kat==='Pulang'                              => 'fa-sign-out-alt',
+                                                $kat==='Cuti'                                => 'fa-calendar-minus',
+                                                default                                      => 'fa-file-alt',
+                                            };
+                                            // Row styling: merah jika telat
+                                            $row_style = $is_late ? 'background:#fff5f5;' : '';
+                                            $name_style= $is_late ? 'color:#dc2626;font-weight:700;' : 'font-weight:600;';
+                                            // Delete URL
+                                            $del_url = $row['record_type']==='absen'
+                                                ? 'laporan.php?hapus_absen='.$row['record_id'].'&kategori='.urlencode($filter_kat).'&id_karyawan='.urlencode($filter_kar).'&periode='.urlencode($filter_per).'&cari='.urlencode($cari)
+                                                : 'laporan.php?hapus_ket='.$row['record_id'].'&kategori='.urlencode($filter_kat).'&id_karyawan='.urlencode($filter_kar).'&periode='.urlencode($filter_per).'&cari='.urlencode($cari);
                                         ?>
-                                        <tr>
-                                            <td><?= $no++ ?></td>
-                                            <td class="font-weight-bold text-primary"><?= htmlspecialchars($row['id_karyawan']) ?></td>
+                                        <tr style="<?= $row_style ?>">
+                                            <td class="text-muted small"><?= $no++ ?></td>
                                             <td>
                                                 <div class="d-flex align-items-center">
-                                                    <div class="avatar-initial avatar-sm mr-2"><?= strtoupper(substr($row['nama'], 0, 1)) ?></div>
-                                                    <strong><?= htmlspecialchars($row['nama']) ?></strong>
+                                                    <div class="avatar-initial avatar-sm mr-2" style="<?= $is_late ? 'background:#fee2e2;color:#dc2626;' : '' ?>">
+                                                        <?= strtoupper(substr($row['nama'], 0, 1)) ?>
+                                                    </div>
+                                                    <div>
+                                                        <span style="<?= $name_style ?>"><?= htmlspecialchars($row['nama']) ?></span>
+                                                        <?php if ($is_late): ?>
+                                                        <span title="Terlambat" style="color:#dc2626;font-size:0.72rem;"> ⚠️ Telat</span>
+                                                        <?php endif; ?>
+                                                    </div>
                                                 </div>
                                             </td>
                                             <td class="text-center">
                                                 <span class="badge-modern <?= $b_class ?>">
-                                                    <i class="fas <?= $ic ?> mr-1"></i> <?= htmlspecialchars($row['kategori']) ?>
+                                                    <i class="fas <?= $ic ?> mr-1"></i><?= htmlspecialchars($kat) ?>
                                                 </span>
                                             </td>
-                                            <td><?= htmlspecialchars($row['alasan']) ?></td>
-                                            <td class="text-muted small"><?= htmlspecialchars($row['waktu']) ?></td>
+                                            <td class="small">
+                                                <?= htmlspecialchars($row['alasan']) ?>
+                                                <?php if (!empty($row['periode'])): ?>
+                                                    <br><span class="badge badge-light border text-dark font-weight-bold mt-1" style="font-size:0.75rem;"><i class="fas fa-calendar-alt text-primary mr-1"></i>Periode: <?= htmlspecialchars($row['periode']) ?></span>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td class="text-muted small" style="white-space:nowrap;"><?= htmlspecialchars($row['waktu']) ?></td>
+                                            <td class="text-center">
+                                                <a href="<?= $del_url ?>" class="btn-hapus-rekap"
+                                                   onclick="return confirm('Hapus data ini? Tindakan tidak bisa dibatalkan.')">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </td>
                                         </tr>
                                         <?php endforeach; ?>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
+                        <style>
+                        .btn-hapus-rekap {
+                            display:inline-flex;align-items:center;justify-content:center;
+                            width:28px;height:28px;border-radius:6px;
+                            background:#fee2e2;color:#dc2626;
+                            font-size:0.75rem;text-decoration:none;
+                            transition:background 0.15s;
+                        }
+                        .btn-hapus-rekap:hover{background:#dc2626;color:#fff;}
+                        </style>
 
                     </div>
                 </div>

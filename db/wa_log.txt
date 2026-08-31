@@ -1,0 +1,21 @@
+2026-08-31 19:07:52 | WA ke 6281213321354: ⏰ *PERINGATAN KETERLAMBATAN*
+
+Halo *Ammar Ibrahim*,
+
+Kamu tercatat *TERLAMBAT* masuk kerja hari ini.
+Tanggal: 31/08/2026
+Waktu Absen: *19:07 WIB*
+Batas Masuk: 08:00 WIB
+
+Keterlambatan ini akan dicatat dalam rekap kehadiran.
+_— Sistem Absensi_
+2026-08-31 12:28:08 | WA ke 6281213321354: ❌ *NOTIFIKASI ABSENSI*
+
+Halo *Ammar Ibrahim*,
+
+Pengajuan *Cuti* kamu telah diperbarui.
+Status: *Ditolak*
+Waktu Pembaruan: 31/08/2026 12:28
+
+Silakan cek portal absensi untuk detail lebih lanjut.
+_— Tim HR & Manajemen_

@@ -112,6 +112,7 @@ $q_list = mysqli_query($koneksi, $sql_list);
                         <li class="active"><a href="karyawan.php"><i class="fas fa-users"></i> Data Karyawan</a></li>
                         <li><a href="admin_user.php"><i class="fas fa-user-shield"></i> Data Admin</a></li>
                         <li><a href="jabatan.php"><i class="fas fa-briefcase"></i> Data Jabatan</a></li>
+                        <li><a href="approval.php"><i class="fas fa-check-double"></i> Approval Cuti</a></li>
                         <li><a href="laporan.php"><i class="fas fa-file-alt"></i> Rekap Kehadiran</a></li>
                         <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout Owner</a></li>
                     </ul>
@@ -140,6 +141,9 @@ $q_list = mysqli_query($koneksi, $sql_list);
                         </li>
                         <li>
                             <a href="jabatan.php"><i class="fas fa-briefcase"></i> Data Jabatan</a>
+                        </li>
+                        <li>
+                            <a href="approval.php"><i class="fas fa-check-double"></i> Approval Cuti</a>
                         </li>
                         <li>
                             <a href="laporan.php"><i class="fas fa-file-alt"></i> Rekap Kehadiran</a>
@@ -288,6 +292,9 @@ $q_list = mysqli_query($koneksi, $sql_list);
                                             <td><?= $tgl_format ?></td>
                                             <td><strong style="color: #059669;"><?= $masa_kerja ?></strong></td>
                                             <td class="text-center" style="white-space: nowrap;">
+                                                <a href="../admin/karyawan_edit.php?id=<?= urlencode($row['id_karyawan']) ?>" class="btn btn-sm btn-warning font-weight-bold mr-1">
+                                                    <i class="fas fa-edit"></i> Edit
+                                                </a>
                                                 <a href="karyawan.php?hapus_id=<?= urlencode($row['id_karyawan']) ?>" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus data karyawan <?= htmlspecialchars(addslashes($row['nama'])) ?>?');">
                                                     <i class="fas fa-trash"></i> Hapus
                                                 </a>

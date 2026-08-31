@@ -125,6 +125,7 @@ $iconList = [
                         <li><a href="admin_user.php"><i class="fas fa-user-shield"></i> Data Admin</a></li>
                         <li class="active"><a href="jabatan.php"><i class="fas fa-briefcase"></i> Data Jabatan</a></li>
                         <li><a href="laporan.php"><i class="fas fa-file-alt"></i> Rekap Kehadiran</a></li>
+                        <li><a href="approval.php"><i class="fas fa-check-double"></i> Approval Cuti</a></li>
                         <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout Owner</a></li>
                     </ul>
                 </div>
@@ -155,6 +156,9 @@ $iconList = [
                         </li>
                         <li>
                             <a href="laporan.php"><i class="fas fa-file-alt"></i> Rekap Kehadiran</a>
+                        </li>
+                        <li>
+                            <a href="approval.php"><i class="fas fa-check-double"></i> Approval Cuti</a>
                         </li>
                         <li>
                             <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout Owner</a>

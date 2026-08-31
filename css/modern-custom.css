@@ -54,8 +54,9 @@ body {
   font-size: 14px;
   line-height: 1.6;
   color: var(--color-text) !important;
-  background-color: var(--color-bg) !important;
+  background-color: #ffffff !important;
   -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -371,6 +372,34 @@ h1, h2, h3, h4, h5, h6 {
   background-color: #fee2e2 !important;
   color: #991b1b !important;
   border: 1px solid #fecaca;
+}
+
+/* Hadir alias */
+.badge-hadir {
+  background-color: #dcfce7 !important;
+  color: #166534 !important;
+  border: 1px solid #bbf7d0;
+}
+
+/* Telat — red alert */
+.badge-telat {
+  background-color: #fee2e2 !important;
+  color: #b91c1c !important;
+  border: 1px solid #fecaca;
+}
+
+/* Istirahat — cyan */
+.badge-istirahat {
+  background-color: #cffafe !important;
+  color: #0e7490 !important;
+  border: 1px solid #a5f3fc;
+}
+
+/* Pulang — indigo */
+.badge-pulang {
+  background-color: #e0e7ff !important;
+  color: #3730a3 !important;
+  border: 1px solid #c7d2fe;
 }
 
 /* Jabatan / info */
@@ -930,3 +959,72 @@ body.landing-page {
   }
 }
 
+/* ─── NAVBAR MOBILE BUG FIX ────────────────────────────────────────────────── */
+/* Pastikan hamburger toggle bekerja dan tidak tumpang tindih */
+.header-mobile { position: sticky; top: 0; z-index: 1050; }
+.header-mobile .navbar-mobile { display: none; }
+.header-mobile.active .navbar-mobile { display: block; }
+
+/* Fix gap di bawah mobile header (no grey strip) */
+.page-wrapper { background: #ffffff !important; }
+.page-container { background: #ffffff !important; }
+
+/* ─── ABSEN GRID RESPONSIVE ────────────────────────────────────────────────── */
+.absen-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+@media (min-width: 480px) {
+  .absen-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .absen-grid .btn-masuk {
+    grid-column: 1 / -1; /* Full width for the first active button */
+  }
+}
+
+/* ─── NOTIFICATION BELL PULSE ──────────────────────────────────────────────── */
+@keyframes bell-pulse {
+  0%, 100% { transform: rotate(0deg); }
+  15% { transform: rotate(10deg); }
+  30% { transform: rotate(-10deg); }
+  45% { transform: rotate(6deg); }
+  60% { transform: rotate(-6deg); }
+}
+.notif-bell-wrapper:hover i { animation: bell-pulse 0.6s ease; }
+.notif-badge { animation: none; }
+
+/* ─── TIMELINE STATUS FIX (Mobile) ─────────────────────────────────────────── */
+.timeline-status {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.ts-divider { min-width: 20px; }
+
+/* ─── TABLE PERFORMANCE ─────────────────────────────────────────────────────── */
+.table-responsive { contain: layout; }
+
+/* ─── GAP UTILITY ───────────────────────────────────────────────────────────── */
+.gap-2 { gap: 0.5rem !important; }
+
+/* ─── ALERT (FLASH) OVERRIDE ────────────────────────────────────────────────── */
+.alert {
+  font-family: var(--font-main) !important;
+  font-size: 0.875rem !important;
+  border-radius: var(--radius-sm) !important;
+}
+
+/* ─── STAT CARDS COMPACT ────────────────────────────────────────────────────── */
+@media (max-width: 575px) {
+  .col-6 .card.p-3 h3 { font-size: 1.4rem !important; }
+  .col-6 .card.p-3 .text-muted { font-size: 0.65rem !important; }
+  .absen-grid { gap: 8px; }
+  .btn-absen-type { padding: 14px 16px !important; font-size: 0.88rem !important; }
+  .timeline-status { padding: 10px 4px; }
+  .ts-icon { width: 30px !important; height: 30px !important; font-size: 0.75rem !important; }
+  .ts-label { font-size: 0.58rem !important; }
+  .ts-time  { font-size: 0.65rem !important; }
+}
