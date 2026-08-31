@@ -1,15 +1,21 @@
 <?php 
+session_start();
+if (!isset($_SESSION['username'])) {
+    header('location: ../index.php');
+    exit;
+}
 
 include '../koneksi.php';
 
-$id = $_GET['id'];
+$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
-$sql = "DELETE FROM tb_absen WHERE id = '$id'";
-$hapus = mysqli_query($koneksi, $sql);
+$stmt = mysqli_prepare($koneksi, "DELETE FROM tb_absen WHERE id = ?");
+mysqli_stmt_bind_param($stmt, "i", $id);
+$hapus = mysqli_stmt_execute($stmt);
 
 if ($hapus) {
 	header("location: ../data_absen.php");
 }else{
-echo "bakekok bunda";
+	echo "Gagal menghapus data absen";
 } 
- ?>
+?>

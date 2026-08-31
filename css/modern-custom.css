@@ -1,0 +1,714 @@
+/*
+ * AbsenBos — Design System CSS
+ * Elegant, subtle, and readable. No flashy gradients, no loud colors.
+ * Palette: Neutral slate background, indigo accents, soft shadows.
+ * Typography: Inter / system-ui stack for sharp rendering.
+ */
+
+/* ─── 1. FONT ─────────────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ─── 2. VARIABLES ───────────────────────────────────────────────────────── */
+:root {
+  --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* Neutral palette — calm, not dark-navy-aggressive */
+  --color-bg: #f5f6f8;
+  --color-surface: #ffffff;
+  --color-border: #e2e5ea;
+  --color-text: #1e2228;
+  --color-muted: #6b7280;
+  --color-subtle: #9ca3af;
+
+  /* Accent — subdued indigo */
+  --color-accent: #4f46e5;
+  --color-accent-light: #eef2ff;
+  --color-accent-hover: #4338ca;
+
+  /* Sidebar */
+  --sidebar-bg: #1f2937;
+  --sidebar-text: #d1d5db;
+  --sidebar-active-bg: rgba(79, 70, 229, 0.18);
+  --sidebar-active-text: #c7d2fe;
+  --sidebar-icon: #9ca3af;
+  --sidebar-hover-bg: rgba(255,255,255,0.06);
+
+  /* Shadows — soft, multi-layer */
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-sm: 0 1px 4px rgba(0,0,0,0.07), 0 0 0 1px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.05);
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.07), 0 4px 16px rgba(0,0,0,0.04);
+
+  /* Radii */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-full: 9999px;
+}
+
+/* ─── 3. BASE RESET ──────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: var(--font-main) !important;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-text) !important;
+  background-color: var(--color-bg) !important;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-main) !important;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-text) !important;
+}
+
+/* Kill all animsition */
+.animsition, .animsition-overlay {
+  opacity: 1 !important;
+  animation-duration: 0s !important;
+}
+.animated { animation: none !important; }
+
+/* ─── 4. SIDEBAR ─────────────────────────────────────────────────────────── */
+.menu-sidebar {
+  background-color: var(--sidebar-bg) !important;
+  border-right: none !important;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.15) !important;
+}
+
+.menu-sidebar .logo {
+  background-color: var(--sidebar-bg) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+  padding: 20px 24px !important;
+  display: flex;
+  align-items: center;
+}
+
+.menu-sidebar .logo h2,
+.menu-sidebar .logo h3 {
+  color: #ffffff !important;
+  font-size: 1.2rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.04em !important;
+  margin: 0 !important;
+  text-transform: uppercase;
+}
+
+.menu-sidebar .logo a { text-decoration: none; }
+
+/* Sidebar nav links */
+.navbar__list > li > a,
+.navbar__list > li > a:hover,
+.navbar-sidebar .navbar__list > li > a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px !important;
+  margin: 2px 8px !important;
+  border-radius: var(--radius-sm) !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  color: var(--sidebar-text) !important;
+  text-decoration: none !important;
+  transition: background 0.15s ease, color 0.15s ease !important;
+}
+
+.navbar__list > li > a:hover {
+  background-color: var(--sidebar-hover-bg) !important;
+  color: #ffffff !important;
+}
+
+.navbar__list > li.active > a,
+.navbar__list > li > a.active {
+  background-color: var(--sidebar-active-bg) !important;
+  color: var(--sidebar-active-text) !important;
+}
+
+.navbar__list > li > a i {
+  font-size: 0.95rem !important;
+  color: var(--sidebar-icon) !important;
+  width: 18px;
+  text-align: center;
+}
+
+.navbar__list > li.active > a i {
+  color: var(--sidebar-active-text) !important;
+}
+
+/* ─── 5. TOP HEADER ──────────────────────────────────────────────────────── */
+.header-desktop {
+  background: var(--color-surface) !important;
+  border-bottom: 1px solid var(--color-border) !important;
+  box-shadow: var(--shadow-xs) !important;
+}
+
+.header-desktop .header-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-desktop h4,
+.header-desktop .h4 {
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  color: var(--color-text) !important;
+  margin: 0 !important;
+}
+
+.header-mobile {
+  background: var(--sidebar-bg) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+}
+
+.navbar-mobile {
+  background: var(--sidebar-bg) !important;
+}
+
+.navbar-mobile__list li a {
+  color: var(--sidebar-text) !important;
+  padding: 10px 20px !important;
+}
+
+.navbar-mobile__list li.active a {
+  color: var(--sidebar-active-text) !important;
+  background: var(--sidebar-active-bg) !important;
+}
+
+/* ─── 6. PAGE BACKGROUND ─────────────────────────────────────────────────── */
+.main-content, .section__content {
+  background-color: var(--color-bg) !important;
+}
+
+/* ─── 7. CARDS ───────────────────────────────────────────────────────────── */
+.card {
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-card) !important;
+}
+
+/* ─── 8. TABLES ──────────────────────────────────────────────────────────── */
+.table-responsive { border-radius: var(--radius-md); overflow: hidden; }
+
+.table {
+  font-size: 0.875rem !important;
+  background: var(--color-surface) !important;
+  margin-bottom: 0 !important;
+}
+
+.table thead th {
+  background-color: #f9fafb !important;
+  border-bottom: 1px solid var(--color-border) !important;
+  border-top: none !important;
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+  color: var(--color-muted) !important;
+  padding: 11px 16px !important;
+  white-space: nowrap;
+}
+
+.table td {
+  border-top: 1px solid #f1f3f5 !important;
+  padding: 12px 16px !important;
+  vertical-align: middle !important;
+  color: var(--color-text) !important;
+}
+
+.table tbody tr:hover td {
+  background-color: #fafbff !important;
+}
+
+.table-borderless td, .table-borderless th {
+  border: none !important;
+}
+
+/* ─── 9. AVATAR INITIALS ─────────────────────────────────────────────────── */
+.avatar-initial {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: var(--radius-full) !important;
+  font-weight: 700 !important;
+  font-family: var(--font-main) !important;
+  letter-spacing: 0 !important;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.avatar-sm {
+  width: 32px !important;
+  height: 32px !important;
+  font-size: 0.8rem !important;
+}
+
+.avatar-md {
+  width: 42px !important;
+  height: 42px !important;
+  font-size: 1rem !important;
+}
+
+.avatar-lg {
+  width: 56px !important;
+  height: 56px !important;
+  font-size: 1.3rem !important;
+}
+
+/* Avatar color palette — 7 muted, non-loud tones */
+.avatar-initial:not([class*='avatar-c']):not([style]) {
+  background-color: var(--color-accent-light) !important;
+  color: var(--color-accent) !important;
+}
+
+.avatar-c1 { background-color: #ede9fe !important; color: #6d28d9 !important; }
+.avatar-c2 { background-color: #dbeafe !important; color: #1d4ed8 !important; }
+.avatar-c3 { background-color: #dcfce7 !important; color: #166534 !important; }
+.avatar-c4 { background-color: #fef3c7 !important; color: #92400e !important; }
+.avatar-c5 { background-color: #fee2e2 !important; color: #991b1b !important; }
+.avatar-c6 { background-color: #e0f2fe !important; color: #075985 !important; }
+.avatar-c7 { background-color: #f3e8ff !important; color: #7e22ce !important; }
+
+/* ─── 10. BADGES (MODERN) ────────────────────────────────────────────────── */
+.badge-modern {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* Hadir / Aktif */
+.badge-absen {
+  background-color: #dcfce7 !important;
+  color: #166534 !important;
+  border: 1px solid #bbf7d0;
+}
+
+/* Izin */
+.badge-izin {
+  background-color: #fef3c7 !important;
+  color: #92400e !important;
+  border: 1px solid #fde68a;
+}
+
+/* Sakit */
+.badge-sakit {
+  background-color: #fee2e2 !important;
+  color: #991b1b !important;
+  border: 1px solid #fecaca;
+}
+
+/* Jabatan / info */
+.badge-jabatan {
+  background-color: var(--color-accent-light) !important;
+  color: var(--color-accent) !important;
+  border: 1px solid #c7d2fe;
+  font-size: 0.8rem !important;
+  padding: 4px 12px !important;
+}
+
+/* ─── 11. FORM CONTROLS ──────────────────────────────────────────────────── */
+.form-control {
+  font-family: var(--font-main) !important;
+  font-size: 0.875rem !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: var(--radius-sm) !important;
+  color: var(--color-text) !important;
+  background-color: var(--color-surface) !important;
+  box-shadow: none !important;
+  transition: border-color 0.15s ease !important;
+}
+
+.form-control:focus {
+  border-color: var(--color-accent) !important;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1) !important;
+  outline: none !important;
+}
+
+.form-control::placeholder { color: var(--color-subtle) !important; }
+
+label {
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  color: var(--color-muted) !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 5px !important;
+  display: block;
+}
+
+/* ─── 12. BUTTONS ────────────────────────────────────────────────────────── */
+.btn {
+  font-family: var(--font-main) !important;
+  font-size: 0.84rem !important;
+  font-weight: 600 !important;
+  border-radius: var(--radius-sm) !important;
+  padding: 7px 16px !important;
+  letter-spacing: 0.01em !important;
+  transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease !important;
+}
+
+.btn:active { transform: scale(0.98) !important; }
+
+/* Primary */
+.btn-primary {
+  background-color: var(--color-accent) !important;
+  border-color: var(--color-accent) !important;
+  color: #fff !important;
+}
+.btn-primary:hover {
+  background-color: var(--color-accent-hover) !important;
+  border-color: var(--color-accent-hover) !important;
+  box-shadow: 0 2px 8px rgba(79,70,229,0.25) !important;
+}
+
+/* Danger */
+.btn-danger {
+  background-color: #dc2626 !important;
+  border-color: #dc2626 !important;
+  color: #fff !important;
+}
+.btn-danger:hover {
+  background-color: #b91c1c !important;
+  border-color: #b91c1c !important;
+}
+
+/* Secondary / outline */
+.btn-outline-primary {
+  color: var(--color-accent) !important;
+  border-color: var(--color-accent) !important;
+  background: transparent !important;
+}
+.btn-outline-primary:hover {
+  background-color: var(--color-accent) !important;
+  color: #fff !important;
+}
+
+.btn-outline-warning {
+  color: #92400e !important;
+  border-color: #d97706 !important;
+  background: transparent !important;
+}
+.btn-outline-warning:hover {
+  background-color: #d97706 !important;
+  color: #fff !important;
+}
+
+/* ─── 13. STAT / OVERVIEW CARDS (Dashboard) ──────────────────────────────── */
+.overview-item {
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-card) !important;
+  padding: 20px !important;
+  margin-bottom: 20px !important;
+  border-left: 4px solid transparent !important;
+}
+
+.overview-item--c1 { border-left-color: #4f46e5 !important; }
+.overview-item--c2 { border-left-color: #0891b2 !important; }
+.overview-item--c3 { border-left-color: #16a34a !important; }
+.overview-item--c4 { border-left-color: #d97706 !important; }
+
+.overview__inner .icon i {
+  font-size: 2rem !important;
+  color: var(--color-muted) !important;
+}
+
+.overview__inner .text h2 {
+  font-size: 2rem !important;
+  font-weight: 700 !important;
+  color: var(--color-text) !important;
+  margin: 0 !important;
+}
+
+.overview__inner .text span {
+  font-size: 0.8rem !important;
+  color: var(--color-muted) !important;
+  font-weight: 500 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.overview-box { display: flex; align-items: center; gap: 16px; }
+
+/* ─── 14. PAGINATION ─────────────────────────────────────────────────────── */
+.pagination .page-link {
+  font-family: var(--font-main) !important;
+  font-size: 0.82rem !important;
+  font-weight: 500 !important;
+  color: var(--color-accent) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: var(--radius-sm) !important;
+  padding: 6px 13px !important;
+  margin: 0 2px !important;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: var(--color-accent) !important;
+  border-color: var(--color-accent) !important;
+  color: #fff !important;
+}
+
+.pagination .page-item.disabled .page-link {
+  color: var(--color-subtle) !important;
+}
+
+/* ─── 15. LANDING PAGE (index.php) ──────────────────────────────────────── */
+body.landing-page {
+  background: linear-gradient(135deg, #4338ca 0%, #1d4ed8 50%, #0369a1 100%) !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  color: #fff;
+}
+
+.landing-card {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 48px 40px;
+  text-align: center;
+  max-width: 360px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+}
+
+.landing-card h1 {
+  color: #fff !important;
+  font-size: 2.4rem !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.03em !important;
+  margin-bottom: 8px !important;
+}
+
+.landing-card p {
+  color: rgba(255,255,255,0.75);
+  font-size: 0.9rem;
+  margin-bottom: 32px;
+}
+
+.btn-portal {
+  display: block !important;
+  width: 100% !important;
+  padding: 13px 20px !important;
+  border-radius: var(--radius-sm) !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  text-align: center !important;
+  text-decoration: none !important;
+  border: none !important;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+.btn-portal:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2) !important;
+}
+
+.btn-portal-admin {
+  background-color: rgba(255,255,255,0.2) !important;
+  color: #fff !important;
+  border: 1px solid rgba(255,255,255,0.35) !important;
+}
+.btn-portal-admin:hover { background-color: rgba(255,255,255,0.3) !important; color: #fff !important; }
+
+.btn-portal-karyawan {
+  background-color: #fff !important;
+  color: var(--color-accent) !important;
+}
+.btn-portal-karyawan:hover { background-color: #f0f0ff !important; color: var(--color-accent-hover) !important; }
+
+/* ─── 16. LOGIN PAGE ─────────────────────────────────────────────────────── */
+.login-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f6f8;
+  padding: 20px;
+}
+
+.login-card {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 44px 40px;
+  width: 100%;
+  max-width: 380px;
+  border: 1px solid var(--color-border);
+}
+
+.login-card .brand {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.login-card .brand h1 {
+  font-size: 1.8rem !important;
+  font-weight: 800 !important;
+  color: var(--color-accent) !important;
+  letter-spacing: -0.03em !important;
+  margin: 0 0 4px !important;
+}
+
+.login-card .brand p {
+  font-size: 0.85rem;
+  color: var(--color-muted);
+  margin: 0;
+}
+
+.login-card .form-control {
+  padding: 10px 14px !important;
+  height: auto !important;
+}
+
+.btn-login {
+  background-color: var(--color-accent) !important;
+  border-color: var(--color-accent) !important;
+  color: #fff !important;
+  font-weight: 700 !important;
+  padding: 11px 20px !important;
+  font-size: 0.9rem !important;
+}
+
+.btn-login:hover {
+  background-color: var(--color-accent-hover) !important;
+  box-shadow: 0 4px 12px rgba(79,70,229,0.3) !important;
+}
+
+/* ─── 17. ABSEN / KARYAWAN CLOCK CARD ───────────────────────────────────── */
+.digital-clock-container {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 36px 32px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.clock-greeting {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+
+.clock-name {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 20px;
+}
+
+.clock-time {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--color-text);
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 4px;
+}
+
+.clock-date {
+  font-size: 0.88rem;
+  color: var(--color-muted);
+  font-weight: 500;
+  margin-bottom: 28px;
+}
+
+.clock-btn-absen {
+  background-color: var(--color-accent) !important;
+  color: #fff !important;
+  font-family: var(--font-main) !important;
+  font-weight: 700 !important;
+  font-size: 0.9rem !important;
+  padding: 13px 36px !important;
+  border: none !important;
+  border-radius: var(--radius-sm) !important;
+  cursor: pointer !important;
+  letter-spacing: 0.04em !important;
+  box-shadow: 0 2px 8px rgba(79,70,229,0.25) !important;
+}
+
+.clock-btn-absen:hover {
+  background-color: var(--color-accent-hover) !important;
+}
+
+/* ─── 18. INPUT GROUPS ───────────────────────────────────────────────────── */
+.input-group-append .btn {
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0 !important;
+}
+
+/* ─── 19. MISC OVERRIDES ─────────────────────────────────────────────────── */
+/* Clean up table styles brought in by theme.css */
+.table-earning th, .table-borderless th { padding: 11px 16px !important; }
+
+/* Section content spacing */
+.section__content--p30 { padding: 24px 20px !important; }
+
+/* Scrollbar — thin and subtle */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
+/* Remove forced hamburger colors from theme */
+.hamburger-inner, .hamburger-inner::before, .hamburger-inner::after { background-color: #d1d5db !important; }
+
+/* Overview title */
+.title-1 { font-size: 1.4rem !important; font-weight: 700 !important; color: var(--color-text) !important; }
+.title-5 { font-size: 1rem !important; font-weight: 600 !important; color: var(--color-text) !important; }
+
+/* ─── 20. MOBILE HAMBURGER MENU OVERRIDES ────────────────────────────────── */
+.header-mobile .hamburger {
+  background: transparent !important;
+  border: none !important;
+  color: #ffffff !important;
+  font-size: 1.4rem !important;
+  width: 40px !important;
+  height: 40px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  outline: none !important;
+  box-shadow: none !important;
+  border-radius: var(--radius-sm) !important;
+  transition: background-color 0.15s ease !important;
+}
+
+.header-mobile .hamburger:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.header-mobile .hamburger i {
+  color: #ffffff !important;
+}
+
+.header-mobile-inner a.logo {
+  text-decoration: none !important;
+}
+
+.header-mobile-inner a.logo h3 {
+  color: #ffffff !important;
+  font-size: 1.15rem !important;
+  font-weight: 700 !important;
+  margin: 0 !important;
+}
+

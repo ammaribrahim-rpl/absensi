@@ -1,23 +1,24 @@
 <?php 
-include '../koneksi.php';
-
-$id = $_GET['id'];
-$sql = "SELECT * FROM tb_keterangan WHERE id = '$id'";
-$query = mysqli_query($koneksi, $sql);
-$hapus_f = mysqli_fetch_array($query);
-
-//proses hapus gambar
-$file = "../karyawan/modul/karyawan/images/".$hapus_f['bukti'];
-unlink($file);
-
-$sql_h = "DELETE FROM tb_keterangan WHERE id = '$id'";
-$hapus = mysqli_query($koneksi, $sql_h);
-
-if ($hapus) {
-	header("location: ../data_keterangan.php");
-}else{
-	echo "gagal dihapus";
+session_start();
+if (!isset($_SESSION['username'])) {
+    header('location: ../index.php');
+    exit;
 }
 
+include '../koneksi.php';
 
- ?>
+$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+
+$stmt_h = mysqli_prepare($koneksi, "DELETE FROM tb_keterangan WHERE id = ?");
+mysqli_stmt_bind_param($stmt_h, "i", $id);
+$hapus = mysqli_stmt_execute($stmt_h);
+mysqli_stmt_close($stmt_h);
+
+if ($hapus) {
+    header("location: ../data_keterangan.php");
+    exit;
+} else {
+    echo "<script>alert('Gagal menghapus data keterangan'); window.location.href = '../data_keterangan.php';</script>";
+    exit;
+}
+?>

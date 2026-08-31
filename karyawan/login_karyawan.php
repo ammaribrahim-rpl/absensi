@@ -1,53 +1,114 @@
-
- <!DOCTYPE html>
-<html>
+<!DOCTYPE html>
+<html lang="id">
 <head>
-<title>Login</title>
-<link rel="icon" href="img/Fevicon.png" type="image/png">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
-<!-- Custom Theme files -->
-<link href="../css/style.css" rel="stylesheet" type="text/css" media="all" />
-<!-- //Custom Theme files -->
-<!-- web font -->
-<link href="//fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i" rel="stylesheet">
-<!-- //web font -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Karyawan — Absensi</title>
+  <link rel="icon" href="../img/Fevicon.png" type="image/png">
+  <link href="../vendors/fontawesome/css/all.min.css" rel="stylesheet" media="all">
+  <link href="../vendor/bootstrap-4.1/bootstrap.min.css" rel="stylesheet" media="all">
+  <link href="../css/modern-custom.css" rel="stylesheet" media="all">
+  <style>
+    /* Input icon wrapper */
+    .input-icon-wrap { position: relative; }
+    .input-icon-wrap .input-icon {
+      position: absolute;
+      left: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--color-subtle);
+      font-size: 0.85rem;
+      pointer-events: none;
+    }
+    .input-icon-wrap .form-control {
+      padding-left: 38px !important;
+    }
+    /* Brand icon circle */
+    .brand-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      background: var(--color-accent-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+    .brand-icon i {
+      font-size: 1.6rem;
+      color: var(--color-accent);
+    }
+    /* Divider */
+    .login-divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--color-subtle);
+      font-size: 0.75rem;
+      margin: 18px 0;
+    }
+    .login-divider::before,
+    .login-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--color-border);
+    }
+  </style>
 </head>
 <body>
-  <!-- main -->
-  <div class="main-w3layouts wrapper">
-    <h1>Login Karyawan</h1>
-    <div class="main-agileinfo">
-      <div class="agileits-top">
-        <form action="pro_login_karyawan.php" method="post">
-          <input class="text" type="text" name="username" placeholder="Username" required=""><br>
-        
-          <input class="text" type="password" name="password" placeholder="Password" required="">
-          <div class="wthree-text">
-            <label class="anim">
-            </label>
-            <div class="clear"> </div>
-          </div>
-          <input type="submit" value="Login">
-        </form>
-        
+<div class="login-wrapper">
+  <div class="login-card">
+
+    <!-- Brand -->
+    <div class="brand">
+      <div class="brand-icon">
+        <i class="fas fa-users"></i>
       </div>
+      <h1>ABSENSI</h1>
+      <p>Masuk sebagai Karyawan</p>
     </div>
 
-    <ul class="colorlib-bubbles">
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-    </ul>
+    <?php if (isset($_GET['error'])): ?>
+    <div class="alert alert-danger py-2 small mb-3" role="alert">
+      <i class="fas fa-exclamation-circle mr-1"></i>
+      <?php echo htmlspecialchars($_GET['error']); ?>
+    </div>
+    <?php endif; ?>
+
+    <form action="pro_login_karyawan.php" method="POST">
+      <div class="form-group mb-3">
+        <label for="username"><i class="fas fa-user mr-1"></i> Username</label>
+        <div class="input-icon-wrap">
+          <i class="input-icon fas fa-user"></i>
+          <input id="username" type="text" class="form-control" name="username"
+                 placeholder="Masukkan username" required autofocus autocomplete="username">
+        </div>
+      </div>
+      <div class="form-group mb-4">
+        <label for="password"><i class="fas fa-lock mr-1"></i> Password</label>
+        <div class="input-icon-wrap">
+          <i class="input-icon fas fa-lock"></i>
+          <input id="password" type="password" class="form-control" name="password"
+                 placeholder="Masukkan password" required autocomplete="current-password">
+        </div>
+      </div>
+      <button type="submit" class="btn btn-login btn-block">
+        <i class="fas fa-sign-in-alt mr-2"></i> Masuk ke Portal
+      </button>
+    </form>
+
+    <div class="login-divider">atau</div>
+
+    <div class="text-center">
+      <a href="../index.php" style="font-size:0.82rem;color:var(--color-muted);">
+        <i class="fas fa-arrow-left mr-1"></i> Kembali ke Beranda
+      </a>
+    </div>
   </div>
-  <!-- //main -->
+</div>
+
+<script src="../vendor/jquery-3.2.1.min.js"></script>
+<script src="../vendor/bootstrap-4.1/bootstrap.min.js"></script>
 </body>
 </html>

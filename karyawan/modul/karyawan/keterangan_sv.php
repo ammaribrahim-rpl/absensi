@@ -1,41 +1,32 @@
 <?php 
-
+session_start();
+if (empty($_SESSION['idsi'])) {
+    header('location: ../../login_karyawan.php');
+    exit;
+}
 include 'koneksi.php';
+
 if (isset($_POST['simpan'])) {
-	
-	$id = $_POST['id'];
-	$id_karyawan = $_POST['id_karyawan'];
-	$nama = $_POST['nama'];
-	$keterangan = $_POST['keterangan'];
-	$alasan = $_POST['alasan'];
-	$waktu = $_POST['waktu'];
+    $id_karyawan = $_POST['id_karyawan'];
+    $nama = $_POST['nama'];
+    $keterangan = $_POST['keterangan'];
+    $alasan = $_POST['alasan'];
+    $waktu = $_POST['waktu'];
+    $bukti = '-'; // Upload file ditiadakan untuk kecepatan & kemudahan
 
-	//untuk gambar
-	$bukti = $_FILES['bukti']['name'];
-	$tmp = $_FILES['bukti']['tmp_name'];
-	$buktibaru = date('dmYHis').$bukti;
-	$path = "images/".$buktibaru;
+    $query = "INSERT INTO tb_keterangan (id_karyawan, nama, keterangan, alasan, waktu, bukti) VALUES (?, ?, ?, ?, ?, ?)";
+    $stmt = mysqli_prepare($koneksi, $query);
+    mysqli_stmt_bind_param($stmt, "ssssss", $id_karyawan, $nama, $keterangan, $alasan, $waktu, $bukti);
+    $result = mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
 
-
+    if ($result) {
+        echo "<script>alert('Pengajuan ".htmlspecialchars($keterangan)." Anda berhasil dikirim');</script>";
+        echo '<script>window.location.href = "../../index.php?m=awal";</script>';
+        exit;
+    } else {
+        echo "<script>alert('Gagal mengirim keterangan'); window.history.back();</script>";
+        exit;
+    }
 }
-
-if (move_uploaded_file($tmp, $path)) {
-	$sql = "SELECT * FROM tb_keterangan WHERE id = '".$id."'";
-	mysqli_query($koneksi, $sql);
-
-}
-
-
-
-
-$query = "INSERT INTO tb_keterangan SET id_karyawan = '$id_karyawan', nama='$nama', keterangan='$keterangan', alasan='$alasan', waktu='$waktu', bukti='$buktibaru'";
-mysqli_query($koneksi, $query);
-
-if ($query) {
-	echo "<script>alert('Anda sudah memberi keterangan') </script>";
-	echo '<script>window.history.back()</script>';
-}else{
-	echo "gagal";
-}
-
- ?>
+?>

@@ -1,74 +1,54 @@
 <?php
-
-
+session_start();
+if (empty($_SESSION['idsi'])) {
+    header('location: ../../login_karyawan.php');
+    exit;
+}
 include 'koneksi.php';
 
-//proses input
 if (isset($_POST['simpan'])) {
-  $id_karyawan = $_POST['id_karyawan'];
-  $username = $_POST['username'];
-  $password = md5($_POST['password']);
-  $nama = $_POST['nama'];
-  $tmp_tgl_lahir = $_POST['tmp_tgl_lahir'];
-  $jenkel = $_POST['jenkel'];
-  $agama = $_POST['agama'];
-  $alamat = $_POST['alamat'];
-  $no_tel = $_POST['no_tel'];
-  $jabatan = $_POST['jabatan'];
+    $id_karyawan = $_SESSION['idsi'];
+    $username = trim($_POST['username']);
+    $nama = trim($_POST['nama']);
+    $tmp_tgl_lahir = trim($_POST['tmp_tgl_lahir']);
+    $jenkel = trim($_POST['jenkel']);
+    $agama = trim($_POST['agama']);
+    $alamat = trim($_POST['alamat']);
+    $no_tel = trim($_POST['no_tel']);
+    $jabatan = trim($_POST['jabatan']);
+    $password = $_POST['password'];
 
-  if(isset($_POST['ubahfoto'])){ // Cek apakah user ingin mengubah fotonya atau tidak
-    $foto     = $_FILES['inpfoto']['name'];
-    $tmp      = $_FILES['inpfoto']['tmp_name'];
-    $fotobaru = date('dmYHis').$foto;
-    $path     = "../images/".$fotobaru;
-
-    if(move_uploaded_file($tmp, $path)){ //awal move upload file
-      $sql    = "SELECT * FROM tb_karyawan WHERE id_karyawan = '".$id_karyawan."' ";
-      $query  = mysqli_query($koneksi, $sql);
-      $hapus_f = mysqli_fetch_array($query);
-
-//proses hapus gambar
-      $file = "../images/".$hapus_f['foto'];
-      unlink($file);//nama variabel yang ada di server
-
-      // Proses ubah data ke Database
-      $sql_f = "UPDATE tb_karyawan set username='$username', password='$password', nama='$nama', tmp_tgl_lahir='$tmp_tgl_lahir', jenkel='$jenkel', agama='$agama', alamat='$alamat', no_tel='$no_tel', jabatan='$jabatan', foto ='$fotobaru' WHERE id_karyawan='$id_karyawan'";
-      $ubah  = mysqli_query($koneksi, $sql_f);
-      if($ubah){
-        echo "<script>alert('Ubah Data Dengan ID Karyawan = ".$id_karyawan." Berhasil') </script>";
-        header('Location:index.php?m=index');
-       
-      } else {
-        $sql    = "SELECT * FROM tb_karyawan WHERE id_karyawan = '".$id_karyawan."' ";
-        $query  = mysqli_query($koneksi, $sql);
-        while ($row = mysqli_fetch_array($query)) {
-          echo "Maaf, Terjadi kesalahan saat mencoba untuk menyimpan data ke database.";
-         
-        }
-      }
-    } //akhir move upload file
-    else{
-      // Jika gambar gagal diupload, Lakukan :
-      echo "Maaf, Gambar gagal untuk diupload.";
-      echo "<br><a href='datakaryawan.php'>Kembali Ke data karyawan</a>";
+    if (!empty($password)) {
+        $password_hashed = password_hash($password, PASSWORD_DEFAULT);
+        $sql_d = "UPDATE tb_karyawan SET username=?, password=?, nama=?, tmp_tgl_lahir=?, jenkel=?, agama=?, alamat=?, no_tel=?, jabatan=? WHERE id_karyawan=?";
+        $stmt_upd = mysqli_prepare($koneksi, $sql_d);
+        mysqli_stmt_bind_param($stmt_upd, "ssssssssss", $username, $password_hashed, $nama, $tmp_tgl_lahir, $jenkel, $agama, $alamat, $no_tel, $jabatan, $id_karyawan);
+    } else {
+        $sql_d = "UPDATE tb_karyawan SET username=?, nama=?, tmp_tgl_lahir=?, jenkel=?, agama=?, alamat=?, no_tel=?, jabatan=? WHERE id_karyawan=?";
+        $stmt_upd = mysqli_prepare($koneksi, $sql_d);
+        mysqli_stmt_bind_param($stmt_upd, "sssssssss", $username, $nama, $tmp_tgl_lahir, $jenkel, $agama, $alamat, $no_tel, $jabatan, $id_karyawan);
     }
- } //akhir ubah foto
- else { //hanya untuk mengubah data
-   $sql_d   = "UPDATE tb_karyawan set username='$username', password='$password', nama='$nama', tmp_tgl_lahir='$tmp_tgl_lahir', jenkel='$jenkel', agama='$agama', alamat='$alamat', no_tel='$no_tel', jabatan='$jabatan' WHERE id_karyawan='$id_karyawan'";
-   $data    = mysqli_query($koneksi, $sql_d);
-   if ($data) {
-     echo "<script>alert('Ubah Data Dengan ID Karyawan = ".$id_karyawan." Berhasil') </script>";
-     header('Location:index.php?m=index');
-   
-   } else {
-     $sql   = "SELECT * FROM tb_karyawan WHERE id_karyawan = '".$id_karyawan."' ";
-     $query = mysqli_query($koneksi, $sql);
-     while ($row = mysqli_fetch_array($query)) {
-       echo "Maaf, Terjadi kesalahan saat mencoba untuk menyimpan data ke database.";
-     
-     }
-   }
- } //akhir untuk mengubah data
-}
 
+    $data = mysqli_stmt_execute($stmt_upd);
+    mysqli_stmt_close($stmt_upd);
+
+    if ($data) {
+        // Perbarui session agar data di header langsung berubah
+        $_SESSION['usersi'] = $username;
+        $_SESSION['namasi'] = $nama;
+        $_SESSION['ttlsi'] = $tmp_tgl_lahir;
+        $_SESSION['jenkelsi'] = $jenkel;
+        $_SESSION['agamasi'] = $agama;
+        $_SESSION['alamatsi'] = $alamat;
+        $_SESSION['teleponsi'] = $no_tel;
+        $_SESSION['jabatansi'] = $jabatan;
+
+        echo "<script>alert('Data Profil berhasil diperbarui');</script>";
+        echo "<script>window.location.href = 'index.php?m=index';</script>";
+        exit;
+    } else {
+        echo "<script>alert('Maaf, Terjadi kesalahan saat menyimpan data.'); window.history.back();</script>";
+        exit;
+    }
+}
 ?>

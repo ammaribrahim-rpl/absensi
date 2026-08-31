@@ -1,63 +1,52 @@
 <?php 
-error_reporting(0);
+session_start();
+if (empty($_SESSION['idsi'])) {
+    header('location: login_karyawan.php');
+    exit;
+}
+include 'koneksi.php';
+$id = $_SESSION['idsi'];
+$sql = "SELECT * FROM tb_karyawan WHERE id_karyawan = ?";
+$stmt = mysqli_prepare($koneksi, $sql);
+mysqli_stmt_bind_param($stmt, "s", $id);
+mysqli_stmt_execute($stmt);
+$res = mysqli_stmt_get_result($stmt);
+$r = mysqli_fetch_assoc($res);
+mysqli_stmt_close($stmt);
 
- ?>
-
+$nama = $r['nama'] ?? $_SESSION['namasi'];
+$initial = strtoupper(substr($nama, 0, 1));
+?>
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="id">
 <head>
-    <!-- Required meta tags-->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="au theme template">
-    <meta name="author" content="Hau Nguyen">
-    <meta name="keywords" content="au theme template">
+    <title>Profil Saya — Absensi</title>
+    <link rel="icon" href="../img/Fevicon.png" type="image/png">
 
-    <!-- Title Page-->
-    <title>Dashboard</title>
-
-       
-  
-
-
-    <!-- Fontfaces CSS-->
-    <link href="css/font-face.css" rel="stylesheet" media="all">
-    <link href="vendor/font-awesome-4.7/css/font-awesome.min.css" rel="stylesheet" media="all">
-    <link href="vendor/font-awesome-5/css/fontawesome-all.min.css" rel="stylesheet" media="all">
-    <link href="vendor/mdi-font/css/material-design-iconic-font.min.css" rel="stylesheet" media="all">
-
-    <!-- Bootstrap CSS-->
-    <link href="vendor/bootstrap-4.1/bootstrap.min.css" rel="stylesheet" media="all">
-
-    <!-- Vendor CSS-->
-    <link href="vendor/animsition/animsition.min.css" rel="stylesheet" media="all">
-    <link href="vendor/bootstrap-progressbar/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet" media="all">
-    <link href="vendor/wow/animate.css" rel="stylesheet" media="all">
-    <link href="vendor/css-hamburgers/hamburgers.min.css" rel="stylesheet" media="all">
-    <link href="vendor/slick/slick.css" rel="stylesheet" media="all">
-    <link href="vendor/select2/select2.min.css" rel="stylesheet" media="all">
-    <link href="vendor/perfect-scrollbar/perfect-scrollbar.css" rel="stylesheet" media="all">
-
-    <!-- Main CSS-->
-    <link href="css/theme.css" rel="stylesheet" media="all">
-
+    <!-- CSS -->
+    <link href="../css/font-face.css" rel="stylesheet" media="all">
+    <link href="../../../vendors/fontawesome/css/all.min.css" rel="stylesheet" media="all">
+    <link href="../vendor/mdi-font/css/material-design-iconic-font.min.css" rel="stylesheet" media="all">
+    <link href="../vendor/bootstrap-4.1/bootstrap.min.css" rel="stylesheet" media="all">
+    <link href="../vendor/perfect-scrollbar/perfect-scrollbar.css" rel="stylesheet" media="all">
+    <link href="../css/theme.css" rel="stylesheet" media="all">
+    <link href="../css/modern-custom.css" rel="stylesheet" media="all">
 </head>
-<?php date_default_timezone_set('Asia/Jakarta'); ?>
-<body class="animsition" >
+
+<body>
     <div class="page-wrapper">
         <!-- HEADER MOBILE-->
         <header class="header-mobile d-block d-lg-none">
             <div class="header-mobile__bar">
                 <div class="container-fluid">
                     <div class="header-mobile-inner">
-                        <a class="logo" href="#">
-                           
+                        <a href="index.php?m=awal" class="logo">
+                            <h3><i class="fas fa-fingerprint mr-2"></i>ABSENSI</h3>
                         </a>
-                        <button class="hamburger hamburger--slider" type="button">
-                            <span class="hamburger-box">
-                                <span class="hamburger-inner"></span>
-                            </span>
+                        <button class="hamburger" type="button">
+                            <i class="fas fa-bars"></i>
                         </button>
                     </div>
                 </div>
@@ -65,259 +54,134 @@ error_reporting(0);
             <nav class="navbar-mobile">
                 <div class="container-fluid">
                     <ul class="navbar-mobile__list list-unstyled">
-                        <li class="has-sub">
-                            <a class="js-arrow" href="?m=awal">
-                                <i class="fas fa-tachometer-alt"></i>Dashboard</a>
-                           
-                        </li>
-                        
-                        
+                        <li><a href="index.php?m=awal"><i class="fas fa-calendar-check"></i> Absensi</a></li>
+                        <li><a href="index.php?m=karyawan&s=title"><i class="fas fa-file-medical"></i> Izin / Sakit</a></li>
+                        <li class="active"><a href="index.php?m=karyawan&s=profil"><i class="fas fa-user"></i> Profil Saya</a></li>
+                        <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                     </ul>
                 </div>
             </nav>
         </header>
-        <!-- END HEADER MOBILE-->
 
         <!-- MENU SIDEBAR-->
         <aside class="menu-sidebar d-none d-lg-block">
             <div class="logo">
-                <a href="?m=awal">
-                    <h1>Karyawan</h1>
+                <a href="index.php?m=awal">
+                    <h3><i class="fas fa-fingerprint mr-2"></i>ABSENSI</h3>
                 </a>
             </div>
             <div class="menu-sidebar__content js-scrollbar1">
                 <nav class="navbar-sidebar">
                     <ul class="list-unstyled navbar__list">
-                        <li class="active has-sub">
-                            <a class="js-arrow" href="?m=awal">
-                                <i class="fas fa-tachometer-alt"></i>Dashboard</a>
-                         
-                        </li>
-                       
-
-                      
-                            
-                            
-                        </li>
+                        <li><a href="index.php?m=awal"><i class="fas fa-calendar-check"></i> Absensi Harian</a></li>
+                        <li><a href="index.php?m=karyawan&s=title"><i class="fas fa-file-medical"></i> Pengajuan Izin</a></li>
+                        <li class="active"><a href="index.php?m=karyawan&s=profil"><i class="fas fa-user"></i> Profil Saya</a></li>
+                        <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                     </ul>
                 </nav>
             </div>
         </aside>
-        <!-- END MENU SIDEBAR-->
 
         <!-- PAGE CONTAINER-->
         <div class="page-container">
-            <!-- HEADER DESKTOP-->
-            <header class="header-desktop">
+            <header class="header-desktop" style="background: #ffffff; border-bottom: 1px solid var(--border-color); box-shadow: var(--shadow-sm);">
                 <div class="section__content section__content--p30">
                     <div class="container-fluid">
                         <div class="header-wrap">
-                            <form class="form-header" action="" method="POST">
-                                <input class="au-input au-input--xl" type="text" name="search" value="Profil" readonly="" />
-                           
-                            </form>
-                            <div class="header-button">
-                               
-                                 <?php
-                                    $id = $_SESSION['idsi'];
-                                    include '../koneksi.php';
-                                    $sql = "SELECT * FROM tb_karyawan WHERE id_karyawan = '$id'";
-                                    $query = mysqli_query($koneksi, $sql);
-                                    $r = mysqli_fetch_array($query);
-
-                                     ?>
-
-                                <div class="account-wrap">
-                                    <div class="account-item clearfix js-item-menu">
-                                        <div class="image">
-                                            <img src="../images/<?php echo $r['foto'];?>" class="img-circle" alt="<?php echo $r['nama'];?>" />
-                                        </div>
-                                        <div class="content">
-                                            <a class="js-acc-btn" href="#"><?php echo $r['nama']; ?></a>
-                                        </div>
-                                        <div class="account-dropdown js-dropdown">
-                                            <div class="info clearfix">
-                                                <div class="image">
-                                                    <a href="#">
-                                                         <img src="../images/<?php echo $r['foto'];?>" class="img-circle" \ />
-                                                    </a>
-                                                </div>
-                                                <div class="content">
-                                                    <h5 class="name">
-                                                        <a href="#"><?php echo $r['nama']; ?></a>
-                                                    </h5>
-                                                    
-                                                </div>
-                                            </div>
-                                            <div class="account-dropdown__body">
-                                                <div class="account-dropdown__item">
-                                                    <a href="?m=karyawan&s=profil">
-                                                        <i class="zmdi zmdi-account"></i>Account</a>
-                                                </div>
-                                                <!--<div class="account-dropdown__item">
-                                                    <a href="#">
-                                                        <i class="zmdi zmdi-settings"></i>Setting</a>
-                                                </div>
-                                                <div class="account-dropdown__item">
-                                                    <a href="#">
-                                                        <i class="zmdi zmdi-money-box"></i>Billing</a>
-                                                </div>
-                                            </div>-->
-                                            <div class="account-dropdown__footer">
-                                                <a href="logout.php">
-                                                    <i class="zmdi zmdi-power"></i>Logout</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div>
+                                <h4 class="font-weight-bold mb-0 text-dark">Profil Karyawan</h4>
                             </div>
+                            <div class="account-item clearfix">
+                                <div class="content d-flex align-items-center">
+                                    <div class="avatar-initial avatar-sm mr-2" style="background: linear-gradient(135deg, #10b981, #059669);"><?= $initial ?></div>
+                                    <span class="font-weight-bold text-dark"><?= htmlspecialchars($nama) ?></span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </header>
-            <!-- HEADER DESKTOP-->
 
             <!-- MAIN CONTENT-->
             <div class="main-content">
                 <div class="section__content section__content--p30">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="overview-wrap">
-                                    <h2 class="title-1" style="text-align: center;">Profil anda <?php echo $_SESSION['namasi']; ?></h2>
-                                    <button class="au-btn au-btn-icon au-btn--blue">
-                                        
+                    <div class="container-fluid" style="max-width: 720px; margin: 0 auto;">
+
+                        <div class="card p-4">
+                            <!-- PROFIL HEADER -->
+                            <div class="d-flex flex-column flex-sm-row align-items-center justify-content-between pb-4 mb-4 border-bottom text-center text-sm-left">
+                                <div class="d-flex flex-column flex-sm-row align-items-center mb-3 mb-sm-0">
+                                    <div class="avatar-initial avatar-lg mr-sm-3 mb-2 mb-sm-0" style="background: linear-gradient(135deg, #2563eb, #1d4ed8);">
+                                        <?= $initial ?>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-weight-bold mb-1 text-dark"><?= htmlspecialchars($r['nama']) ?></h4>
+                                        <span class="badge-modern badge-jabatan mr-2"><?= htmlspecialchars($r['jabatan']) ?></span>
+                                        <small class="text-muted">NIP: <?= htmlspecialchars($r['id_karyawan']) ?></small>
+                                    </div>
                                 </div>
+                                <a href="?m=karyawan&s=edit" class="btn btn-primary btn-sm font-weight-bold">
+                                    <i class="fas fa-edit mr-1"></i> Edit Profil
+                                </a>
                             </div>
-                        </div>
 
-
-                        <!-- FORM -->
-                        <div class="row">
-                           <div class="table-responsive table--no-card m-b-30">
-                            <form action="modul/karyawan/keterangan_sv.php" method="post" enctype="multipart/form-data">
-                                <div class="form-group">
-                                	
-                                	<?php
-                                	$id = $_SESSION['idsi'];
-                                	include 'koneksi.php';
-                                	$sql = "SELECT * FROM tb_karyawan WHERE id_karyawan = '$id'";
-                                	$query = mysqli_query($koneksi, $sql);
-                                	$r = mysqli_fetch_array($query);
-
-                                	 ?>
-
-                                <table class="table table-borderless table-striped table-earning" >
-                                        
-                                        <tbody>
-                                              
-                                            <tr>
-                                                <td>NIP</td>
-                                                <td>
-                                                
-                                                <?php echo $r['id_karyawan'];?>
-                                                
-                                            </td>
-                                            </tr>
-                                           
-                                            <tr>
-                                                <td>Nama</td>
-                                                <td><?php echo $r['nama'];?></td>
-                                            </tr>
-
-                                            <tr>
-                                            	<td>Tempat & tanggal lahir</td>
-                                            	<td><?php echo $r['tmp_tgl_lahir'];?></td>
-                                            </tr>
-
-                                            <TR>
-                                            	<td>Jenis Kelamin</td>
-                                            	<td><?php echo $r['jenkel'];?></td>
-                                            </TR>
-
-                                             <tr>
-                                                <td>Agama</td>
-                                                <td><?php echo $r['agama'];?></td>
-                                            </tr>
-
-                                           <tr>
-                                              <td>Alamat</td>
-                                              <td><?php echo $r['alamat'];?></td>
-                                           </tr>
-
-                                           <tr>
-                                           	<td>Nomor telepon</td>
-                                           	<td><?php echo $r['no_tel'];?></td>
-                                           </tr>
-
-                                           <tr>
-                                           	<td>Jabatan</td>
-                                           	<td><?php echo $r['jabatan'];?> </td>
-                                           </tr>
-
-                                           <tr>
-                                           	<td>Foto</td>
-                                           	<td><img src="../images/<?php echo $r['foto'];?>" style="width: 128px;height: 128px;"></td>
-                                           </tr>
-
-                                            <tr>
-                                                <td><a href="?m=karyawan&s=edit&id_karyawan=<?php echo $id;?>">EDIT</a></td>
-                                               
-                                            </tr>
-                                            
-                                      </tbody>
-                                    </table>
-                                        </div>
-                            </form>
-                                    
-                                </div>    
-                        </div>
-                     
-
-                        <!-- END FORM -->
-                        
-                        <div class="header-desktop">
-                            <div class="col-md-12">
-                                <div class="copyright">
-                                    <p>Copyright © 2018 Colorlib. All rights reserved. Template by <a href="https://colorlib.com">Colorlib</a>.</p>
-                                </div>
+                            <!-- DETAIL TABEL -->
+                            <div class="table-responsive">
+                                <table class="table table-borderless">
+                                    <tbody>
+                                        <tr>
+                                            <td class="font-weight-bold text-muted" style="width: 35%;">NIP</td>
+                                            <td class="font-weight-bold text-primary"><?= htmlspecialchars($r['id_karyawan']) ?></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="font-weight-bold text-muted">Username</td>
+                                            <td class="font-weight-bold text-dark"><?= htmlspecialchars($r['username']) ?></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="font-weight-bold text-muted">Nama Lengkap</td>
+                                            <td><?= htmlspecialchars($r['nama']) ?></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="font-weight-bold text-muted">Tempat, Tgl Lahir</td>
+                                            <td><?= htmlspecialchars($r['tmp_tgl_lahir']) ?></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="font-weight-bold text-muted">Jenis Kelamin</td>
+                                            <td><span class="badge-modern bg-light text-dark border"><?= htmlspecialchars($r['jenkel']) ?></span></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="font-weight-bold text-muted">Agama</td>
+                                            <td><?= htmlspecialchars($r['agama']) ?></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="font-weight-bold text-muted">Nomor Telepon</td>
+                                            <td><?= htmlspecialchars($r['no_tel']) ?></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="font-weight-bold text-muted">Jabatan</td>
+                                            <td><span class="badge-modern badge-jabatan"><?= htmlspecialchars($r['jabatan']) ?></span></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="font-weight-bold text-muted">Alamat</td>
+                                            <td><?= nl2br(htmlspecialchars($r['alamat'])) ?></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
+
                         </div>
+
                     </div>
                 </div>
             </div>
-            <!-- END MAIN CONTENT-->
-            <!-- END PAGE CONTAINER-->
         </div>
-
     </div>
 
-    <!-- Jquery JS-->
-    <script src="vendor/jquery-3.2.1.min.js"></script>
-    <!-- Bootstrap JS-->
-    <script src="vendor/bootstrap-4.1/popper.min.js"></script>
-    <script src="vendor/bootstrap-4.1/bootstrap.min.js"></script>
-    <!-- Vendor JS       -->
-    <script src="vendor/slick/slick.min.js">
-    </script>
-    <script src="vendor/wow/wow.min.js"></script>
-    <script src="vendor/animsition/animsition.min.js"></script>
-    <script src="vendor/bootstrap-progressbar/bootstrap-progressbar.min.js">
-    </script>
-    <script src="vendor/counter-up/jquery.waypoints.min.js"></script>
-    <script src="vendor/counter-up/jquery.counterup.min.js">
-    </script>
-    <script src="vendor/circle-progress/circle-progress.min.js"></script>
-    <script src="vendor/perfect-scrollbar/perfect-scrollbar.js"></script>
-    <script src="vendor/chartjs/Chart.bundle.min.js"></script>
-    <script src="vendor/select2/select2.min.js">
-    </script>
-
-    <!-- Main JS-->
-    <script src="js/main.js"></script>
-
+    <!-- Scripts -->
+    <script src="../vendor/jquery-3.2.1.min.js"></script>
+    <script src="../vendor/bootstrap-4.1/popper.min.js"></script>
+    <script src="../vendor/bootstrap-4.1/bootstrap.min.js"></script>
+    <script src="../vendor/perfect-scrollbar/perfect-scrollbar.js"></script>
+    <script src="../js/main.js"></script>
 </body>
-
 </html>
-<!-- end document-->
