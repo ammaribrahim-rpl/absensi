@@ -15,10 +15,10 @@ $hapus = mysqli_stmt_execute($stmt_h);
 mysqli_stmt_close($stmt_h);
 
 if ($hapus) {
-    header("location: ../data_keterangan.php");
+    header("location: ../admin/data_keterangan.php");
     exit;
 } else {
-    echo "<script>alert('Gagal menghapus data keterangan'); window.location.href = '../data_keterangan.php';</script>";
+    echo "<script>alert('Gagal menghapus data keterangan'); window.location.href = '../admin/data_keterangan.php';</script>";
     exit;
 }
 ?>

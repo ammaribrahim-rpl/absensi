@@ -93,7 +93,7 @@ INSERT INTO `tb_jabatan` (`id`, `jabatan`) VALUES
 --
 
 CREATE TABLE `tb_karyawan` (
-  `id_karyawan` int(11) NOT NULL,
+  `id_karyawan` varchar(50) NOT NULL,
   `username` varchar(50) NOT NULL,
   `password` varchar(50) NOT NULL,
   `nama` varchar(255) NOT NULL,

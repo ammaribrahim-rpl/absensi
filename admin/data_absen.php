@@ -4,8 +4,9 @@ if (!isset($_SESSION['username'])) {
     header("location: ../index.php");
     exit;
 }
-include '../koneksi.php';
-$username = $_SESSION['username'];
+// Hak akses dibatasi: Admin tidak diizinkan melihat status/presensi karyawan
+echo "<script>alert('Akses Dibatasi: Data presensi karyawan hanya dapat diakses oleh Owner.'); window.location.href='admin.php';</script>";
+exit;
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -44,7 +45,7 @@ $username = $_SESSION['username'];
             <nav class="navbar-mobile">
                 <div class="container-fluid">
                     <ul class="navbar-mobile__list list-unstyled">
-                        <li><a href="admin.php"><i class="fas fa-tachometer-alt"></i> Beranda</a></li>
+                        <li><a href="admin.php"><i class="fas fa-home"></i> Beranda</a></li>
                         <li><a href="datakaryawan.php"><i class="fas fa-users"></i> Data Karyawan</a></li>
                         <li><a href="datauser.php"><i class="fas fa-user-shield"></i> Data User</a></li>
                         <li><a href="datajabatan.php"><i class="fas fa-briefcase"></i> Data Jabatan</a></li>
@@ -66,7 +67,7 @@ $username = $_SESSION['username'];
             <div class="menu-sidebar__content js-scrollbar1">
                 <nav class="navbar-sidebar">
                     <ul class="list-unstyled navbar__list">
-                        <li><a href="admin.php"><i class="fas fa-tachometer-alt"></i> Beranda</a></li>
+                        <li><a href="admin.php"><i class="fas fa-home"></i> Beranda</a></li>
                         <li><a href="datakaryawan.php"><i class="fas fa-users"></i> Data Karyawan</a></li>
                         <li><a href="datauser.php"><i class="fas fa-user-shield"></i> Data User</a></li>
                         <li><a href="datajabatan.php"><i class="fas fa-briefcase"></i> Data Jabatan</a></li>
@@ -110,7 +111,7 @@ $username = $_SESSION['username'];
                                 </div>
                                 <form action="prospenab.php" method="POST" class="form-inline">
                                     <div class="input-group">
-                                        <input type="text" name="cari" class="form-control form-control-sm" placeholder="Cari NIP / Nama..." required>
+                                        <input type="text" name="cari" class="form-control form-control-sm" placeholder="Cari Tanggal Masuk / Nama..." required>
                                         <div class="input-group-append">
                                             <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-search"></i></button>
                                         </div>
@@ -123,7 +124,7 @@ $username = $_SESSION['username'];
                                     <thead>
                                         <tr>
                                             <th>No</th>
-                                            <th>NIP</th>
+                                            <th>Tanggal Masuk</th>
                                             <th>Nama Karyawan</th>
                                             <th>Waktu Absensi</th>
                                             <th>Status</th>
@@ -170,7 +171,7 @@ $username = $_SESSION['username'];
                                                 </span>
                                             </td>
                                             <td class="text-center">
-                                                <a href="absen/hapus_absen.php?id=<?= urlencode($row['id']) ?>" class="btn btn-sm btn-danger" onclick="return confirm('Yakin ingin menghapus catatan absen ini?');">
+                                                <a href="../absen/hapus_absen.php?id=<?= urlencode($row['id']) ?>" class="btn btn-sm btn-danger" onclick="return confirm('Yakin ingin menghapus catatan absen ini?');">
                                                     <i class="fas fa-trash mr-1"></i> Hapus
                                                 </a>
                                             </td>

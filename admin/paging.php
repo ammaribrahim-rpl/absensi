@@ -20,16 +20,15 @@ $data_karyawan = mysqli_stmt_get_result($stmt_karyawan);
 $nomor = $halaman_awal + 1;
 
 while ($row = mysqli_fetch_assoc($data_karyawan)) {
+    $masa_kerja = hitungMasaKerja($row['id_karyawan']);
 ?>
 <tr>
-    <td><?= htmlspecialchars($row['id_karyawan']) ?></td>
+    <td class="font-weight-bold" style="color: #2563eb;"><?= htmlspecialchars($row['id_karyawan']) ?></td>
+    <td><span class="badge badge-info" style="font-size: 0.85rem; padding: 5px 9px;"><?= $masa_kerja ?></span></td>
     <td><?= htmlspecialchars($row['nama']) ?></td>
-    <td><?= htmlspecialchars($row['tmp_tgl_lahir']) ?></td>
-    <td><?= htmlspecialchars($row['jenkel']) ?></td>
-    <td><?= htmlspecialchars($row['agama']) ?></td>
-    <td><?= htmlspecialchars($row['alamat']) ?></td>
+    <td><span class="badge-modern bg-light text-dark border"><?= htmlspecialchars($row['jenkel']) ?></span></td>
     <td><?= htmlspecialchars($row['no_tel']) ?></td>
-    <td><?= htmlspecialchars($row['jabatan']) ?></td>
+    <td><span class="badge-modern badge-jabatan"><i class="<?= htmlspecialchars(getJabatanIcon($row['jabatan'])) ?> mr-1"></i><?= htmlspecialchars($row['jabatan']) ?></span></td>
     <td>
         <a href="karyawan_edit.php?id_karyawan=<?= urlencode($row['id_karyawan']) ?>" class="btn btn-primary btn-sm">
             <i class="fa fa-edit"></i> Ubah

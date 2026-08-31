@@ -52,22 +52,13 @@ $username = $_SESSION['username'];
                 <div class="container-fluid">
                     <ul class="navbar-mobile__list list-unstyled">
                         <li class="active">
-                            <a href="admin.php"><i class="fas fa-tachometer-alt"></i>Beranda</a>
+                            <a href="admin.php"><i class="fas fa-home"></i>Beranda</a>
                         </li>
                         <li>
                             <a href="datakaryawan.php"><i class="fas fa-users"></i>Data Karyawan</a>
                         </li>
                         <li>
-                            <a href="datauser.php"><i class="fas fa-user-shield"></i>Data User</a>
-                        </li>
-                        <li>
-                            <a href="datajabatan.php"><i class="far fa-check-square"></i>Data Jabatan</a>
-                        </li>
-                        <li>
-                            <a href="data_absen.php"><i class="fas fa-calendar-alt"></i>Data Absen</a>
-                        </li>
-                        <li>
-                            <a href="data_keterangan.php"><i class="fas fa-table"></i>Data Keterangan</a>
+                            <a href="datajabatan.php"><i class="fas fa-briefcase"></i>Data Jabatan</a>
                         </li>
                         <li>
                             <a href="../logout.php"><i class="fas fa-sign-out-alt"></i>Logout</a>
@@ -89,22 +80,13 @@ $username = $_SESSION['username'];
                 <nav class="navbar-sidebar">
                     <ul class="list-unstyled navbar__list">
                         <li class="active">
-                            <a href="admin.php"><i class="fas fa-tachometer-alt"></i>Beranda</a>
+                            <a href="admin.php"><i class="fas fa-home"></i>Beranda</a>
                         </li>
                         <li>
                             <a href="datakaryawan.php"><i class="fas fa-users"></i>Data Karyawan</a>
                         </li>
                         <li>
-                            <a href="datauser.php"><i class="fas fa-user-shield"></i>Data User</a>
-                        </li>
-                        <li>
-                            <a href="datajabatan.php"><i class="far fa-check-square"></i>Data Jabatan</a>
-                        </li>
-                        <li>
-                            <a href="data_absen.php"><i class="fas fa-calendar-alt"></i>Data Absen</a>
-                        </li>
-                        <li>
-                            <a href="data_keterangan.php"><i class="fas fa-table"></i>Data Keterangan</a>
+                            <a href="datajabatan.php"><i class="fas fa-briefcase"></i>Data Jabatan</a>
                         </li>
                         <li>
                             <a href="../logout.php"><i class="fas fa-sign-out-alt"></i>Logout</a>
@@ -122,15 +104,13 @@ $username = $_SESSION['username'];
                 <div class="section__content section__content--p30">
                     <div class="container-fluid">
                         <div class="header-wrap">
-                            <h4>Dashboard Administrator</h4>
-                            <div class="header-button">
-                                <div class="account-wrap">
-                                    <div class="account-item clearfix">
-                                        <div class="content d-flex align-items-center">
-                                            <div class="avatar-initial avatar-sm mr-2"><?= strtoupper(substr($username, 0, 1)) ?></div>
-                                            <span class="font-weight-bold text-dark"><?= htmlspecialchars($username) ?></span>
-                                        </div>
-                                    </div>
+                            <div>
+                                <h4 class="font-weight-bold mb-0 text-dark">Portal Admin</h4>
+                            </div>
+                            <div class="account-item clearfix">
+                                <div class="content d-flex align-items-center">
+                                    <div class="avatar-initial avatar-sm mr-2"><?= strtoupper(substr($username, 0, 1)) ?></div>
+                                    <span class="font-weight-bold text-dark"><?= htmlspecialchars($username) ?></span>
                                 </div>
                             </div>
                         </div>
@@ -152,7 +132,7 @@ $username = $_SESSION['username'];
                         </div>
 
                         <div class="row m-t-25">
-                            <div class="col-sm-6 col-lg-3">
+                            <div class="col-sm-6 col-lg-6 mb-3">
                                 <div class="overview-item overview-item--c1">
                                     <div class="overview__inner">
                                         <div class="overview-box clearfix">
@@ -167,37 +147,7 @@ $username = $_SESSION['username'];
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-sm-6 col-lg-3">
-                                <div class="overview-item overview-item--c2">
-                                    <div class="overview__inner">
-                                        <div class="overview-box clearfix">
-                                            <div class="icon">
-                                                <i class="zmdi zmdi-calendar-check"></i>
-                                            </div>
-                                            <div class="text">
-                                                <h2><?= mysqli_fetch_row(mysqli_query($koneksi, "SELECT COUNT(*) FROM tb_absen"))[0] ?? 0 ?></h2>
-                                                <span>Total Presensi</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-lg-3">
-                                <div class="overview-item overview-item--c3">
-                                    <div class="overview__inner">
-                                        <div class="overview-box clearfix">
-                                            <div class="icon">
-                                                <i class="zmdi zmdi-file-text"></i>
-                                            </div>
-                                            <div class="text">
-                                                <h2><?= mysqli_fetch_row(mysqli_query($koneksi, "SELECT COUNT(*) FROM tb_keterangan"))[0] ?? 0 ?></h2>
-                                                <span>Izin / Sakit</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-lg-3">
+                            <div class="col-sm-6 col-lg-6 mb-3">
                                 <div class="overview-item overview-item--c4">
                                     <div class="overview__inner">
                                         <div class="overview-box clearfix">
@@ -209,6 +159,46 @@ $username = $_SESSION['username'];
                                                 <span>Data Jabatan</span>
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- QUICK ACTIONS -->
+                        <div class="row mt-4">
+                            <div class="col-md-6 mb-3">
+                                <div class="card p-4 h-100">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="avatar-initial avatar-md mr-3" style="background: var(--color-accent-light); color: var(--color-accent);">
+                                            <i class="fas fa-users fa-lg"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="font-weight-bold text-dark mb-1">Kelola Data Karyawan</h5>
+                                            <p class="text-muted small mb-0">Tambah karyawan baru, perbarui data dan atur posisi/jabatan.</p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-auto pt-2">
+                                        <a href="datakaryawan.php" class="btn btn-primary btn-sm font-weight-bold">
+                                            <i class="fas fa-external-link-alt mr-1"></i> Buka Data Karyawan
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="card p-4 h-100">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="avatar-initial avatar-md mr-3" style="background: #eef2ff; color: #4338ca;">
+                                            <i class="fas fa-briefcase fa-lg"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="font-weight-bold text-dark mb-1">Kelola Posisi & Jabatan</h5>
+                                            <p class="text-muted small mb-0">Atur daftar jabatan dan kustomisasi ikon posisi karyawan.</p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-auto pt-2">
+                                        <a href="datajabatan.php" class="btn btn-outline-primary btn-sm font-weight-bold">
+                                            <i class="fas fa-briefcase mr-1"></i> Buka Data Jabatan
+                                        </a>
                                     </div>
                                 </div>
                             </div>

@@ -4,8 +4,8 @@ if (!isset($_SESSION['username'])) {
     header("location: ../index.php");
     exit;
 }
-include '../koneksi.php';
-$username = $_SESSION['username'];
+echo "<script>alert('Akses Dibatasi: Pengelolaan akun administrator hanya dapat diakses oleh Owner.'); window.location.href='admin.php';</script>";
+exit;
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -44,12 +44,10 @@ $username = $_SESSION['username'];
             <nav class="navbar-mobile">
                 <div class="container-fluid">
                     <ul class="navbar-mobile__list list-unstyled">
-                        <li><a href="admin.php"><i class="fas fa-tachometer-alt"></i> Beranda</a></li>
+                        <li><a href="admin.php"><i class="fas fa-home"></i> Beranda</a></li>
                         <li><a href="datakaryawan.php"><i class="fas fa-users"></i> Data Karyawan</a></li>
                         <li class="active"><a href="datauser.php"><i class="fas fa-user-shield"></i> Data User</a></li>
                         <li><a href="datajabatan.php"><i class="fas fa-briefcase"></i> Data Jabatan</a></li>
-                        <li><a href="data_absen.php"><i class="fas fa-calendar-check"></i> Data Absen</a></li>
-                        <li><a href="data_keterangan.php"><i class="fas fa-file-medical"></i> Data Keterangan</a></li>
                         <li><a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                     </ul>
                 </div>
@@ -66,12 +64,10 @@ $username = $_SESSION['username'];
             <div class="menu-sidebar__content js-scrollbar1">
                 <nav class="navbar-sidebar">
                     <ul class="list-unstyled navbar__list">
-                        <li><a href="admin.php"><i class="fas fa-tachometer-alt"></i> Beranda</a></li>
+                        <li><a href="admin.php"><i class="fas fa-home"></i> Beranda</a></li>
                         <li><a href="datakaryawan.php"><i class="fas fa-users"></i> Data Karyawan</a></li>
                         <li class="active"><a href="datauser.php"><i class="fas fa-user-shield"></i> Data User</a></li>
                         <li><a href="datajabatan.php"><i class="fas fa-briefcase"></i> Data Jabatan</a></li>
-                        <li><a href="data_absen.php"><i class="fas fa-calendar-check"></i> Data Absen</a></li>
-                        <li><a href="data_keterangan.php"><i class="fas fa-file-medical"></i> Data Keterangan</a></li>
                         <li><a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                     </ul>
                 </nav>

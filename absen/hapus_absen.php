@@ -14,7 +14,7 @@ mysqli_stmt_bind_param($stmt, "i", $id);
 $hapus = mysqli_stmt_execute($stmt);
 
 if ($hapus) {
-	header("location: ../data_absen.php");
+	header("location: ../admin/data_absen.php");
 }else{
 	echo "Gagal menghapus data absen";
 } 

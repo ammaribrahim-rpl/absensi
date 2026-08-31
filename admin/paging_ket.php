@@ -46,7 +46,7 @@ while ($row = mysqli_fetch_assoc($data_karyawan)) {
         <?= htmlspecialchars($row['waktu']) ?>
     </td>
     <td class="text-center">
-        <a href="absen/hapus_keterangan.php?id=<?= urlencode($row['id']) ?>" class="btn btn-sm btn-danger" onclick="return confirm('Yakin ingin menghapus data keterangan ini?');" title="Hapus">
+        <a href="../absen/hapus_keterangan.php?id=<?= urlencode($row['id']) ?>" class="btn btn-sm btn-danger" onclick="return confirm('Yakin ingin menghapus data keterangan ini?');" title="Hapus">
             <i class="fas fa-trash mr-1"></i> Hapus
         </a>
     </td>

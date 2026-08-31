@@ -11,15 +11,15 @@ if (isset($_POST['simpan'])) {
     $username = trim($_POST['username']);
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
     $nama = trim($_POST['nama']);
-    $tmp_tgl_lahir = trim($_POST['tmp_tgl_lahir']);
-    $jenkel = trim($_POST['jenkel']);
-    $agama = trim($_POST['agama']);
-    $alamat = trim($_POST['alamat']);
-    $no_tel = trim($_POST['no_tel']);
-    $jabatan = trim($_POST['jabatan']);
-    $foto = ''; // Upload foto ditiadakan untuk efisiensi & kecepatan
+    $tmp_tgl_lahir = '';
+    $jenkel = trim($_POST['jenkel'] ?? 'Laki-laki');
+    $agama = '';
+    $alamat = '';
+    $no_tel = trim($_POST['no_tel'] ?? '');
+    $jabatan = trim($_POST['jabatan'] ?? '');
+    $foto = '';
 
-    // Cek duplikasi NIP
+    // Cek duplikasi Tanggal Masuk / ID
     $sql = "SELECT id_karyawan FROM tb_karyawan WHERE id_karyawan = ?";
     $stmt = mysqli_prepare($koneksi, $sql);
     mysqli_stmt_bind_param($stmt, "s", $id_karyawan);
@@ -27,7 +27,7 @@ if (isset($_POST['simpan'])) {
     $tambah = mysqli_stmt_get_result($stmt);
 
     if ($row = mysqli_fetch_row($tambah)) {
-        echo "<script>alert('Data Dengan NIP = ".htmlspecialchars($id_karyawan)." sudah ada');</script>";
+        echo "<script>alert('Data Dengan Tanggal Masuk = ".htmlspecialchars($id_karyawan)." sudah ada');</script>";
         echo "<script>window.location.href = \"datakaryawan.php\";</script>";
         exit;
     }

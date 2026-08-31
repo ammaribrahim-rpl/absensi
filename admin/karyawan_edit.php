@@ -63,13 +63,10 @@ $username = $_SESSION['username'];
             <nav class="navbar-mobile">
                 <div class="container-fluid">
                     <ul class="navbar-mobile__list list-unstyled">
-                        <li><a href="admin.php"><i class="fas fa-tachometer-alt"></i>Beranda</a></li>
-                        <li class="active"><a href="datakaryawan.php"><i class="fas fa-users"></i>Data Karyawan</a></li>
-                        <li><a href="datauser.php"><i class="fas fa-user-shield"></i>Data User</a></li>
-                        <li><a href="datajabatan.php"><i class="far fa-check-square"></i>Data Jabatan</a></li>
-                        <li><a href="data_absen.php"><i class="fas fa-calendar-alt"></i>Data Absen</a></li>
-                        <li><a href="data_keterangan.php"><i class="fas fa-table"></i>Data Keterangan</a></li>
-                        <li><a href="../logout.php"><i class="fas fa-sign-out-alt"></i>Logout</a></li>
+                        <li><a href="admin.php"><i class="fas fa-home"></i> Beranda</a></li>
+                        <li class="active"><a href="datakaryawan.php"><i class="fas fa-users"></i> Data Karyawan</a></li>
+                        <li><a href="datajabatan.php"><i class="fas fa-briefcase"></i> Data Jabatan</a></li>
+                        <li><a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                     </ul>
                 </div>
             </nav>
@@ -86,13 +83,10 @@ $username = $_SESSION['username'];
             <div class="menu-sidebar__content js-scrollbar1">
                 <nav class="navbar-sidebar">
                     <ul class="list-unstyled navbar__list">
-                        <li><a href="admin.php"><i class="fas fa-tachometer-alt"></i>Beranda</a></li>
-                        <li class="active"><a href="datakaryawan.php"><i class="fas fa-users"></i>Data Karyawan</a></li>
-                        <li><a href="datauser.php"><i class="fas fa-user-shield"></i>Data User</a></li>
-                        <li><a href="datajabatan.php"><i class="far fa-check-square"></i>Data Jabatan</a></li>
-                        <li><a href="data_absen.php"><i class="fas fa-calendar-alt"></i>Data Absen</a></li>
-                        <li><a href="data_keterangan.php"><i class="fas fa-table"></i>Data Keterangan</a></li>
-                        <li><a href="../logout.php"><i class="fas fa-sign-out-alt"></i>Logout</a></li>
+                        <li><a href="admin.php"><i class="fas fa-home"></i> Beranda</a></li>
+                        <li class="active"><a href="datakaryawan.php"><i class="fas fa-users"></i> Data Karyawan</a></li>
+                        <li><a href="datajabatan.php"><i class="fas fa-briefcase"></i> Data Jabatan</a></li>
+                        <li><a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                     </ul>
                 </nav>
             </div>
@@ -140,12 +134,15 @@ $username = $_SESSION['username'];
                                             </thead>
                                             <tbody>
                                                 <tr>
-                                                    <td style="width: 25%;">NIP</td>
-                                                    <td><input type="text" class="form-control" readonly value="<?= htmlspecialchars($d['id_karyawan']) ?>"></td>
+                                                    <td style="width: 25%;">Tanggal Masuk</td>
+                                                    <td>
+                                                        <input type="text" class="form-control bg-light font-weight-bold" readonly value="<?= htmlspecialchars($d['id_karyawan']) ?>">
+                                                        <small class="form-text text-muted">Masa Kerja saat ini: <strong style="color: #4f46e5;"><?= hitungMasaKerja($d['id_karyawan']) ?></strong></small>
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td>Username</td>
-                                                    <td><input type="text" class="form-control" name="username" required value="<?= htmlspecialchars($d['username']) ?>"></td>
+                                                    <td><input type="text" class="form-control" name="username" required value="<?= htmlspecialchars($d['username']) ?>" placeholder="Masukkan username karyawan"></td>
                                                 </tr>
                                                 <tr>
                                                     <td>Password Baru (Opsional)</td>
@@ -153,11 +150,7 @@ $username = $_SESSION['username'];
                                                 </tr>
                                                 <tr>
                                                     <td>Nama Lengkap</td>
-                                                    <td><input type="text" class="form-control" name="nama" required value="<?= htmlspecialchars($d['nama']) ?>"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Tempat & Tanggal Lahir</td>
-                                                    <td><input type="text" class="form-control" name="tmp_tgl_lahir" value="<?= htmlspecialchars($d['tmp_tgl_lahir']) ?>"></td>
+                                                    <td><input type="text" class="form-control" name="nama" required value="<?= htmlspecialchars($d['nama']) ?>" placeholder="Masukkan nama lengkap karyawan"></td>
                                                 </tr>
                                                 <tr>
                                                     <td>Jenis Kelamin</td>
@@ -169,26 +162,8 @@ $username = $_SESSION['username'];
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td>Agama</td>
-                                                    <td>
-                                                        <select class="form-control" name="agama">
-                                                            <?php
-                                                            $agamas = ['Islam', 'Kristen', 'Katholik', 'Hindu', 'Buddha', 'KongHuCu'];
-                                                            foreach ($agamas as $ag) {
-                                                                $sel = ($d['agama'] == $ag) ? 'selected' : '';
-                                                                echo "<option value='$ag' $sel>$ag</option>";
-                                                            }
-                                                            ?>
-                                                        </select>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Alamat</td>
-                                                    <td><textarea class="form-control" name="alamat" rows="2"><?= htmlspecialchars($d['alamat']) ?></textarea></td>
-                                                </tr>
-                                                <tr>
                                                     <td>Nomor Telepon</td>
-                                                    <td><input type="text" class="form-control" name="no_tel" value="<?= htmlspecialchars($d['no_tel']) ?>"></td>
+                                                    <td><input type="text" class="form-control" name="no_tel" value="<?= htmlspecialchars($d['no_tel']) ?>" placeholder="Contoh: 081234567890"></td>
                                                 </tr>
                                                 <tr>
                                                     <td>Jabatan</td>

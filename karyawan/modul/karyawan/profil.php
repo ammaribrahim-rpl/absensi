@@ -1,5 +1,5 @@
 <?php 
-session_start();
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
 if (empty($_SESSION['idsi'])) {
     header('location: login_karyawan.php');
     exit;
@@ -55,7 +55,7 @@ $initial = strtoupper(substr($nama, 0, 1));
                 <div class="container-fluid">
                     <ul class="navbar-mobile__list list-unstyled">
                         <li><a href="index.php?m=awal"><i class="fas fa-calendar-check"></i> Absensi</a></li>
-                        <li><a href="index.php?m=karyawan&s=title"><i class="fas fa-file-medical"></i> Izin / Sakit</a></li>
+                        <li><a href="index.php?m=karyawan&s=title"><i class="fas fa-file-medical"></i> Izin / Cuti</a></li>
                         <li class="active"><a href="index.php?m=karyawan&s=profil"><i class="fas fa-user"></i> Profil Saya</a></li>
                         <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                     </ul>
@@ -74,7 +74,7 @@ $initial = strtoupper(substr($nama, 0, 1));
                 <nav class="navbar-sidebar">
                     <ul class="list-unstyled navbar__list">
                         <li><a href="index.php?m=awal"><i class="fas fa-calendar-check"></i> Absensi Harian</a></li>
-                        <li><a href="index.php?m=karyawan&s=title"><i class="fas fa-file-medical"></i> Pengajuan Izin</a></li>
+                        <li><a href="index.php?m=karyawan&s=title"><i class="fas fa-file-medical"></i> Pengajuan Izin / Cuti</a></li>
                         <li class="active"><a href="index.php?m=karyawan&s=profil"><i class="fas fa-user"></i> Profil Saya</a></li>
                         <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                     </ul>

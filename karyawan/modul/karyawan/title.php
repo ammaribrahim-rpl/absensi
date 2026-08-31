@@ -1,20 +1,40 @@
 <?php 
-session_start();
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
 if (empty($_SESSION['idsi'])) {
     header('location: login_karyawan.php');
     exit;
 }
+require_once __DIR__ . '/koneksi.php';
 date_default_timezone_set('Asia/Jakarta');
 $nama = $_SESSION['namasi'] ?? 'Karyawan';
 $id_karyawan = $_SESSION['idsi'] ?? '';
 $initial = strtoupper(substr($nama, 0, 1));
+
+// Ambil tanggal masuk dari database (fallback ke $id_karyawan jika tgl_masuk kosong di DB)
+$tgl_masuk_karyawan = $id_karyawan;
+if (!empty($id_karyawan)) {
+    $stmt_tm = mysqli_prepare($koneksi, "SELECT tgl_masuk FROM tb_karyawan WHERE id_karyawan = ? LIMIT 1");
+    if ($stmt_tm) {
+        mysqli_stmt_bind_param($stmt_tm, "s", $id_karyawan);
+        mysqli_stmt_execute($stmt_tm);
+        $res_tm = mysqli_stmt_get_result($stmt_tm);
+        if ($row_tm = mysqli_fetch_assoc($res_tm)) {
+            if (!empty($row_tm['tgl_masuk'])) {
+                $tgl_masuk_karyawan = $row_tm['tgl_masuk'];
+            }
+        }
+        mysqli_stmt_close($stmt_tm);
+    }
+}
+$tgl_masuk_display  = getFormattedTglMasuk($tgl_masuk_karyawan);
+$masa_kerja_display = hitungMasaKerja($tgl_masuk_karyawan);
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Form Pengajuan Izin / Sakit — Absensi</title>
+    <title>Form Pengajuan Izin / Cuti — Absensi</title>
     <link rel="icon" href="../img/Fevicon.png" type="image/png">
 
     <!-- CSS -->
@@ -47,8 +67,8 @@ $initial = strtoupper(substr($nama, 0, 1));
                 <div class="container-fluid">
                     <ul class="navbar-mobile__list list-unstyled">
                         <li><a href="index.php?m=awal"><i class="fas fa-calendar-check"></i> Absensi</a></li>
-                        <li class="active"><a href="index.php?m=karyawan&s=title"><i class="fas fa-file-medical"></i> Izin / Sakit</a></li>
-                        <li><a href="index.php?m=karyawan&s=profil"><i class="fas fa-user"></i> Profil Saya</a></li>
+                        <li class="active"><a href="index.php?m=karyawan&s=title"><i class="fas fa-file-medical"></i> Izin / Cuti</a></li>
+
                         <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                     </ul>
                 </div>
@@ -66,8 +86,8 @@ $initial = strtoupper(substr($nama, 0, 1));
                 <nav class="navbar-sidebar">
                     <ul class="list-unstyled navbar__list">
                         <li><a href="index.php?m=awal"><i class="fas fa-calendar-check"></i> Absensi Harian</a></li>
-                        <li class="active"><a href="index.php?m=karyawan&s=title"><i class="fas fa-file-medical"></i> Pengajuan Izin</a></li>
-                        <li><a href="index.php?m=karyawan&s=profil"><i class="fas fa-user"></i> Profil Saya</a></li>
+                        <li class="active"><a href="index.php?m=karyawan&s=title"><i class="fas fa-file-medical"></i> Pengajuan Izin / Cuti</a></li>
+
                         <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                     </ul>
                 </nav>
@@ -76,7 +96,7 @@ $initial = strtoupper(substr($nama, 0, 1));
 
         <!-- PAGE CONTAINER-->
         <div class="page-container">
-            <header class="header-desktop" style="background: #ffffff; border-bottom: 1px solid var(--border-color); box-shadow: var(--shadow-sm);">
+            <header class="header-desktop d-none d-lg-block" style="background: #ffffff; border-bottom: 1px solid var(--border-color); box-shadow: var(--shadow-sm);">
                 <div class="section__content section__content--p30">
                     <div class="container-fluid">
                         <div class="header-wrap">
@@ -102,7 +122,7 @@ $initial = strtoupper(substr($nama, 0, 1));
                         <div class="card p-4">
                             <div class="d-flex align-items-center justify-content-between pb-3 mb-3 border-bottom">
                                 <div>
-                                    <h4 class="font-weight-bold mb-1 text-dark">Form Pengajuan Izin / Sakit</h4>
+                                    <h4 class="font-weight-bold mb-1 text-dark">Form Pengajuan Izin / Cuti</h4>
                                     <p class="text-muted small mb-0">Isi keterangan di bawah ini jika Anda tidak dapat hadir bekerja.</p>
                                 </div>
                                 <a href="index.php?m=awal" class="btn btn-sm btn-outline-secondary">
@@ -117,12 +137,13 @@ $initial = strtoupper(substr($nama, 0, 1));
 
                                 <div class="row">
                                     <div class="col-md-6 form-group">
-                                        <label class="font-weight-bold text-muted small">NIP KARYAWAN</label>
-                                        <input type="text" class="form-control bg-light" readonly value="<?= htmlspecialchars($id_karyawan) ?>">
+                                        <label class="font-weight-bold text-muted small">TANGGAL MASUK</label>
+                                        <input type="text" class="form-control bg-light font-weight-bold" readonly value="<?= htmlspecialchars($tgl_masuk_display) ?>">
+                                        <small class="form-text text-muted">Masa Kerja: <strong style="color: #4f46e5;"><?= $masa_kerja_display ?></strong></small>
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label class="font-weight-bold text-muted small">NAMA LENGKAP</label>
-                                        <input type="text" class="form-control bg-light" readonly value="<?= htmlspecialchars($nama) ?>">
+                                        <input type="text" class="form-control bg-light font-weight-bold" readonly value="<?= htmlspecialchars($nama) ?>">
                                     </div>
                                 </div>
 
@@ -130,14 +151,14 @@ $initial = strtoupper(substr($nama, 0, 1));
                                     <label class="font-weight-bold text-muted small">KATEGORI KETERANGAN</label>
                                     <select name="keterangan" class="form-control" required>
                                         <option value="">-- Pilih Kategori --</option>
-                                        <option value="Sakit">Sakit</option>
                                         <option value="Izin">Izin</option>
+                                        <option value="Cuti">Cuti</option>
                                     </select>
                                 </div>
 
                                 <div class="form-group">
                                     <label class="font-weight-bold text-muted small">ALASAN / DETAIL KETERANGAN</label>
-                                    <textarea name="alasan" class="form-control" rows="4" placeholder="Tuliskan alasan lengkap tidak dapat hadir..." required></textarea>
+                                    <textarea name="alasan" class="form-control" rows="4" placeholder="Tuliskan alasan lengkap permohonan izin atau cuti..." required></textarea>
                                 </div>
 
                                 <div class="form-group">

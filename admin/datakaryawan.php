@@ -51,13 +51,10 @@ $username = $_SESSION['username'];
             <nav class="navbar-mobile">
                 <div class="container-fluid">
                     <ul class="navbar-mobile__list list-unstyled">
-                        <li><a href="admin.php"><i class="fas fa-tachometer-alt"></i>Beranda</a></li>
-                        <li class="active"><a href="datakaryawan.php"><i class="fas fa-users"></i>Data Karyawan</a></li>
-                        <li><a href="datauser.php"><i class="fas fa-user-shield"></i>Data User</a></li>
-                        <li><a href="datajabatan.php"><i class="far fa-check-square"></i>Data Jabatan</a></li>
-                        <li><a href="data_absen.php"><i class="fas fa-calendar-alt"></i>Data Absen</a></li>
-                        <li><a href="data_keterangan.php"><i class="fas fa-table"></i>Data Keterangan</a></li>
-                        <li><a href="../logout.php"><i class="fas fa-sign-out-alt"></i>Logout</a></li>
+                        <li><a href="admin.php"><i class="fas fa-home"></i> Beranda</a></li>
+                        <li class="active"><a href="datakaryawan.php"><i class="fas fa-users"></i> Data Karyawan</a></li>
+                        <li><a href="datajabatan.php"><i class="fas fa-briefcase"></i> Data Jabatan</a></li>
+                        <li><a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                     </ul>
                 </div>
             </nav>
@@ -74,13 +71,10 @@ $username = $_SESSION['username'];
             <div class="menu-sidebar__content js-scrollbar1">
                 <nav class="navbar-sidebar">
                     <ul class="list-unstyled navbar__list">
-                        <li><a href="admin.php"><i class="fas fa-tachometer-alt"></i>Beranda</a></li>
-                        <li class="active"><a href="datakaryawan.php"><i class="fas fa-users"></i>Data Karyawan</a></li>
-                        <li><a href="datauser.php"><i class="fas fa-user-shield"></i>Data User</a></li>
-                        <li><a href="datajabatan.php"><i class="far fa-check-square"></i>Data Jabatan</a></li>
-                        <li><a href="data_absen.php"><i class="fas fa-calendar-alt"></i>Data Absen</a></li>
-                        <li><a href="data_keterangan.php"><i class="fas fa-table"></i>Data Keterangan</a></li>
-                        <li><a href="../logout.php"><i class="fas fa-sign-out-alt"></i>Logout</a></li>
+                        <li><a href="admin.php"><i class="fas fa-home"></i> Beranda</a></li>
+                        <li class="active"><a href="datakaryawan.php"><i class="fas fa-users"></i> Data Karyawan</a></li>
+                        <li><a href="datajabatan.php"><i class="fas fa-briefcase"></i> Data Jabatan</a></li>
+                        <li><a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                     </ul>
                 </nav>
             </div>
@@ -129,24 +123,24 @@ $username = $_SESSION['username'];
                                             </thead>
                                             <tbody>
                                                 <tr>
-                                                    <td style="width: 25%;">NIP</td>
-                                                    <td><input type="text" class="form-control" name="id_karyawan" required autocomplete="off"></td>
+                                                    <td style="width: 25%;">Tanggal Masuk</td>
+                                                    <td>
+                                                        <input type="text" class="form-control" name="id_karyawan" id="inputTglMasuk" required autocomplete="off" placeholder="DD-MM-YYYY (contoh: 15-01-2024)" maxlength="10" oninput="formatDateDDMMYYYY(this)">
+                                                        <small class="form-text text-muted">Format: <strong>Tanggal-Bulan-Tahun (DD-MM-YYYY)</strong>. Masa kerja akan otomatis dihitung.</small>
+                                                        <div id="previewMasaKerja" class="mt-1 font-weight-bold" style="color: #4f46e5; display: none;"></div>
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td>Username</td>
-                                                    <td><input type="text" class="form-control" name="username" required autocomplete="off"></td>
+                                                    <td><input type="text" class="form-control" name="username" required autocomplete="off" placeholder="Masukkan username untuk login"></td>
                                                 </tr>
                                                 <tr>
                                                     <td>Password</td>
-                                                    <td><input type="password" class="form-control" name="password" required autocomplete="off"></td>
+                                                    <td><input type="password" class="form-control" name="password" required autocomplete="off" placeholder="Masukkan password akun"></td>
                                                 </tr>
                                                 <tr>
                                                     <td>Nama Lengkap</td>
-                                                    <td><input type="text" class="form-control" name="nama" required autocomplete="off"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Tempat & Tanggal Lahir</td>
-                                                    <td><input type="text" class="form-control" name="tmp_tgl_lahir" autocomplete="off" placeholder="Contoh: Jakarta / 15-05-1995"></td>
+                                                    <td><input type="text" class="form-control" name="nama" required autocomplete="off" placeholder="Masukkan nama lengkap karyawan"></td>
                                                 </tr>
                                                 <tr>
                                                     <td>Jenis Kelamin</td>
@@ -158,25 +152,8 @@ $username = $_SESSION['username'];
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td>Agama</td>
-                                                    <td>
-                                                        <select class="form-control" name="agama">
-                                                            <option value="Islam">Islam</option>
-                                                            <option value="Kristen">Kristen</option>
-                                                            <option value="Katholik">Katholik</option>
-                                                            <option value="Hindu">Hindu</option>
-                                                            <option value="Buddha">Buddha</option>
-                                                            <option value="KongHuCu">KongHuCu</option>
-                                                        </select>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Alamat</td>
-                                                    <td><textarea class="form-control" name="alamat" rows="2"></textarea></td>
-                                                </tr>
-                                                <tr>
                                                     <td>Nomor Telepon</td>
-                                                    <td><input type="text" class="form-control" name="no_tel" autocomplete="off"></td>
+                                                    <td><input type="text" class="form-control" name="no_tel" autocomplete="off" placeholder="Contoh: 081234567890"></td>
                                                 </tr>
                                                 <tr>
                                                     <td>Jabatan</td>
@@ -211,7 +188,7 @@ $username = $_SESSION['username'];
                                     <h4 class="title-5 mb-0">Daftar Data Karyawan</h4>
                                     <form action="prospenkar.php" method="POST" class="form-inline">
                                         <div class="input-group">
-                                            <input type="text" name="cari" class="form-control form-control-sm" placeholder="Cari NIP / Nama..." required>
+                                            <input type="text" name="cari" class="form-control form-control-sm" placeholder="Cari Tanggal Masuk / Nama..." required>
                                             <div class="input-group-append">
                                                 <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-search"></i> Cari</button>
                                             </div>
@@ -223,12 +200,10 @@ $username = $_SESSION['username'];
                                     <table class="table table-borderless table-striped table-earning">
                                         <thead>
                                             <tr>
-                                                <th>NIP</th>
+                                                <th>Tanggal Masuk</th>
+                                                <th>Masa Kerja</th>
                                                 <th>Nama</th>
-                                                <th>TTL</th>
                                                 <th>Gender</th>
-                                                <th>Agama</th>
-                                                <th>Alamat</th>
                                                 <th>Telepon</th>
                                                 <th>Jabatan</th>
                                                 <th>Aksi</th>
@@ -272,5 +247,45 @@ $username = $_SESSION['username'];
     <script src="../vendor/bootstrap-4.1/bootstrap.min.js"></script>
     <script src="../vendor/perfect-scrollbar/perfect-scrollbar.js"></script>
     <script src="../js/main.js"></script>
+    <script>
+    function formatDateDDMMYYYY(input) {
+        let v = input.value.replace(/\D/g, '').slice(0, 8);
+        if (v.length >= 5) {
+            input.value = v.slice(0, 2) + '-' + v.slice(2, 4) + '-' + v.slice(4);
+        } else if (v.length >= 3) {
+            input.value = v.slice(0, 2) + '-' + v.slice(2);
+        } else {
+            input.value = v;
+        }
+        
+        const preview = document.getElementById('previewMasaKerja');
+        if (v.length === 8) {
+            const d = parseInt(v.slice(0, 2), 10);
+            const m = parseInt(v.slice(2, 4), 10) - 1;
+            const y = parseInt(v.slice(4), 10);
+            const tglMasuk = new Date(y, m, d);
+            const now = new Date();
+            if (!isNaN(tglMasuk.getTime())) {
+                let diffYears = now.getFullYear() - tglMasuk.getFullYear();
+                let diffMonths = now.getMonth() - tglMasuk.getMonth();
+                if (now.getDate() < tglMasuk.getDate()) {
+                    diffMonths--;
+                }
+                if (diffMonths < 0) {
+                    diffYears--;
+                    diffMonths += 12;
+                }
+                if (diffYears < 0) {
+                    preview.textContent = "⏱️ Estimasi Masa Kerja: 0 Tahun 0 Bulan";
+                } else {
+                    preview.textContent = `⏱️ Estimasi Masa Kerja: ${diffYears} Tahun ${diffMonths} Bulan`;
+                }
+                preview.style.display = 'block';
+            }
+        } else if (preview) {
+            preview.style.display = 'none';
+        }
+    }
+    </script>
 </body>
 </html>

@@ -45,12 +45,9 @@ $cari = trim($_POST['cari'] ?? '');
             <nav class="navbar-mobile">
                 <div class="container-fluid">
                     <ul class="navbar-mobile__list list-unstyled">
-                        <li><a href="admin.php"><i class="fas fa-tachometer-alt"></i> Beranda</a></li>
+                        <li><a href="admin.php"><i class="fas fa-home"></i> Beranda</a></li>
                         <li class="active"><a href="datakaryawan.php"><i class="fas fa-users"></i> Data Karyawan</a></li>
-                        <li><a href="datauser.php"><i class="fas fa-user-shield"></i> Data User</a></li>
                         <li><a href="datajabatan.php"><i class="fas fa-briefcase"></i> Data Jabatan</a></li>
-                        <li><a href="data_absen.php"><i class="fas fa-calendar-check"></i> Data Absen</a></li>
-                        <li><a href="data_keterangan.php"><i class="fas fa-file-medical"></i> Data Keterangan</a></li>
                         <li><a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                     </ul>
                 </div>
@@ -67,12 +64,9 @@ $cari = trim($_POST['cari'] ?? '');
             <div class="menu-sidebar__content js-scrollbar1">
                 <nav class="navbar-sidebar">
                     <ul class="list-unstyled navbar__list">
-                        <li><a href="admin.php"><i class="fas fa-tachometer-alt"></i> Beranda</a></li>
+                        <li><a href="admin.php"><i class="fas fa-home"></i> Beranda</a></li>
                         <li class="active"><a href="datakaryawan.php"><i class="fas fa-users"></i> Data Karyawan</a></li>
-                        <li><a href="datauser.php"><i class="fas fa-user-shield"></i> Data User</a></li>
                         <li><a href="datajabatan.php"><i class="fas fa-briefcase"></i> Data Jabatan</a></li>
-                        <li><a href="data_absen.php"><i class="fas fa-calendar-check"></i> Data Absen</a></li>
-                        <li><a href="data_keterangan.php"><i class="fas fa-file-medical"></i> Data Keterangan</a></li>
                         <li><a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                     </ul>
                 </nav>
@@ -118,12 +112,10 @@ $cari = trim($_POST['cari'] ?? '');
                                     <thead>
                                         <tr>
                                             <th>No</th>
-                                            <th>NIP</th>
+                                            <th>Tanggal Masuk</th>
+                                            <th>Masa Kerja</th>
                                             <th>Nama</th>
-                                            <th>Tempat / Tgl Lahir</th>
                                             <th>Gender</th>
-                                            <th>Agama</th>
-                                            <th>Alamat</th>
                                             <th>Telepon</th>
                                             <th>Jabatan</th>
                                             <th class="text-center">Aksi</th>
@@ -141,7 +133,7 @@ $cari = trim($_POST['cari'] ?? '');
                                         if (mysqli_num_rows($query) == 0):
                                         ?>
                                         <tr>
-                                            <td colspan="10" class="text-center py-4 text-muted">
+                                            <td colspan="8" class="text-center py-4 text-muted">
                                                 <i class="fas fa-info-circle mr-1"></i> Tidak ditemukan karyawan dengan kata kunci "<?= htmlspecialchars($cari) ?>"
                                             </td>
                                         </tr>
@@ -152,22 +144,21 @@ $cari = trim($_POST['cari'] ?? '');
                                             $initial = strtoupper(substr($row['nama'], 0, 1));
                                             $color_idx = (abs(crc32($row['nama'])) % 7) + 1;
                                             $avatar_class = "avatar-c" . $color_idx;
+                                            $masa_kerja = hitungMasaKerja($row['id_karyawan']);
                                         ?>
                                         <tr>
                                             <td><?= $no++ ?></td>
                                             <td class="font-weight-bold" style="color: #2563eb;"><?= htmlspecialchars($row['id_karyawan']) ?></td>
+                                            <td><span class="badge badge-info" style="font-size: 0.85rem; padding: 5px 9px;"><?= $masa_kerja ?></span></td>
                                             <td>
                                                 <div class="d-flex align-items-center">
                                                     <div class="avatar-initial avatar-sm mr-2 <?= $avatar_class ?>"><?= $initial ?></div>
                                                     <span class="font-weight-bold text-dark"><?= htmlspecialchars($row['nama']) ?></span>
                                                 </div>
                                             </td>
-                                            <td><?= htmlspecialchars($row['tmp_tgl_lahir']) ?></td>
                                             <td><span class="badge-modern bg-light text-dark border"><?= htmlspecialchars($row['jenkel']) ?></span></td>
-                                            <td><?= htmlspecialchars($row['agama']) ?></td>
-                                            <td><?= htmlspecialchars($row['alamat']) ?></td>
                                             <td><?= htmlspecialchars($row['no_tel']) ?></td>
-                                            <td><span class="badge-modern badge-jabatan"><?= htmlspecialchars($row['jabatan']) ?></span></td>
+                                            <td><span class="badge-modern badge-jabatan"><i class="<?= htmlspecialchars(getJabatanIcon($row['jabatan'])) ?> mr-1"></i><?= htmlspecialchars($row['jabatan']) ?></span></td>
                                             <td class="text-center" style="white-space: nowrap;">
                                                 <a href="karyawan_edit.php?id_karyawan=<?= urlencode($row['id_karyawan']) ?>" class="btn btn-sm btn-primary mr-1">
                                                     <i class="fas fa-edit"></i>
