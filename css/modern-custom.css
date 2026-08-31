@@ -238,7 +238,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ─── 6. PAGE BACKGROUND ─────────────────────────────────────────────────── */
-.main-content, .section__content {
+.main-content, .section__content, .page-wrapper, .page-container {
   background-color: var(--color-bg) !important;
 }
 
@@ -783,6 +783,7 @@ body.landing-page {
   .page-container {
     padding-left: 0 !important;
     position: relative !important;
+    top: 0 !important;
   }
 
   .main-content {
