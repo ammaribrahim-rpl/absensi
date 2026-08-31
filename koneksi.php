@@ -9,7 +9,8 @@ if (!function_exists('hitungMasaKerja')) {
     function hitungMasaKerja($tgl_masuk) {
         if (empty($tgl_masuk)) return '-';
         $tgl_clean = trim($tgl_masuk);
-        if (preg_match('/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})$/', $tgl_clean, $m)) {
+        // Ekstrak DD-MM-YYYY dari awal string (abaikan suffix seperti "-1", "-2")
+        if (preg_match('/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})/', $tgl_clean, $m)) {
             $tgl_clean = sprintf('%04d-%02d-%02d', $m[3], $m[2], $m[1]);
         }
         try {
@@ -30,7 +31,8 @@ if (!function_exists('getFormattedTglMasuk')) {
     function getFormattedTglMasuk($raw) {
         if (empty($raw)) return '-';
         $raw = trim($raw);
-        if (preg_match('/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})$/', $raw, $m)) {
+        // Ekstrak DD-MM-YYYY dari awal string (abaikan suffix seperti "-1", "-2")
+        if (preg_match('/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})/', $raw, $m)) {
             return sprintf('%02d-%02d-%04d', $m[1], $m[2], $m[3]);
         }
         $ts = strtotime($raw);
