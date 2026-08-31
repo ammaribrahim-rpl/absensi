@@ -145,10 +145,10 @@ $masa_kerja_display = hitungMasaKerja($tgl_masuk_karyawan);
                         </div>
 
                         <!-- CARD PENGAJUAN IZIN / CUTI -->
-                        <div class="card p-4">
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar-initial avatar-md mr-3" style="background: #fffbeb; color: #d97706;">
+                        <div class="card p-3 p-sm-4">
+                            <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center justify-content-between">
+                                <div class="d-flex align-items-center mb-3 mb-sm-0">
+                                    <div class="avatar-initial avatar-md mr-3" style="background: #fffbeb; color: #d97706; flex-shrink: 0;">
                                         <i class="fas fa-file-medical"></i>
                                     </div>
                                     <div>
@@ -156,7 +156,7 @@ $masa_kerja_display = hitungMasaKerja($tgl_masuk_karyawan);
                                         <p class="text-muted mb-0 small">Ajukan izin kerja atau cuti tanpa ribet.</p>
                                     </div>
                                 </div>
-                                <a href="index.php?m=karyawan&s=title" class="btn btn-outline-warning font-weight-bold">
+                                <a href="index.php?m=karyawan&s=title" class="btn btn-outline-warning font-weight-bold w-100 w-sm-auto text-center" style="white-space: nowrap;">
                                     Ajukan Izin / Cuti <i class="fas fa-arrow-right ml-1"></i>
                                 </a>
                             </div>

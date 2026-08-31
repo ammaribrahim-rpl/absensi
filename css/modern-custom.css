@@ -918,3 +918,10 @@ body.landing-page {
   height: 52px;
   font-size: 1.2rem;
 }
+
+@media (min-width: 576px) {
+  .w-sm-auto {
+    width: auto !important;
+  }
+}
+
