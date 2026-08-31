@@ -125,9 +125,9 @@ $masa_kerja_display = hitungMasaKerja($tgl_masuk_karyawan);
                             <div class="clock-name mb-2"><?= htmlspecialchars($nama) ?></div>
                             
                             <!-- BADGE TANGGAL MASUK & MASA KERJA -->
-                            <div class="d-inline-flex align-items-center bg-white rounded-pill px-3 py-1 mb-3 shadow-xs flex-wrap justify-content-center" style="border: 1px solid rgba(0,0,0,0.06);">
-                                <span class="text-muted small mr-2"><i class="fas fa-calendar-alt text-primary mr-1"></i> Masuk: <strong><?= htmlspecialchars($tgl_masuk_display) ?></strong></span>
-                                <span class="text-muted small ml-2 border-left pl-2"><i class="fas fa-business-time text-success mr-1"></i> Masa Kerja: <strong style="color:#059669;"><?= $masa_kerja_display ?></strong></span>
+                            <div class="d-flex flex-column align-items-center justify-content-center mb-3">
+                                <span class="text-muted small mb-1"><i class="fas fa-calendar-alt text-primary mr-1"></i> Masuk: <strong><?= htmlspecialchars($tgl_masuk_display) ?></strong></span>
+                                <span class="text-muted small"><i class="fas fa-business-time text-success mr-1"></i> Masa Kerja: <strong style="color:#059669;"><?= $masa_kerja_display ?></strong></span>
                             </div>
                             
                             <div class="clock-time" id="realtimeClock">--:--:--</div>

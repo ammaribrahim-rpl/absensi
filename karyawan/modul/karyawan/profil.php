@@ -27,7 +27,7 @@ $initial = strtoupper(substr($nama, 0, 1));
 
     <!-- CSS -->
     <link href="../css/font-face.css" rel="stylesheet" media="all">
-    <link href="../../../vendors/fontawesome/css/all.min.css" rel="stylesheet" media="all">
+    <link href="../vendors/fontawesome/css/all.min.css" rel="stylesheet" media="all">
     <link href="../vendor/mdi-font/css/material-design-iconic-font.min.css" rel="stylesheet" media="all">
     <link href="../vendor/bootstrap-4.1/bootstrap.min.css" rel="stylesheet" media="all">
     <link href="../vendor/perfect-scrollbar/perfect-scrollbar.css" rel="stylesheet" media="all">
