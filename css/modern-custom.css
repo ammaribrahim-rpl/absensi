@@ -13,7 +13,7 @@
   --font-main: 'Inter', system-ui, -apple-system, sans-serif;
 
   /* Neutral palette — calm, not dark-navy-aggressive */
-  --color-bg: #f5f6f8;
+  --color-bg: #ffffff;
   --color-surface: #ffffff;
   --color-border: #e2e5ea;
   --color-text: #1e2228;
@@ -410,6 +410,10 @@ label {
   letter-spacing: 0.05em;
   margin-bottom: 5px !important;
   display: block;
+}
+
+.form-group {
+  margin-bottom: 20px !important;
 }
 
 /* ─── 12. BUTTONS ────────────────────────────────────────────────────────── */

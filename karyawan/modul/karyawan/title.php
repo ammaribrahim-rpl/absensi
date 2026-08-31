@@ -120,12 +120,12 @@ $masa_kerja_display = hitungMasaKerja($tgl_masuk_karyawan);
                     <div class="container-fluid" style="max-width: 720px; margin: 0 auto;">
 
                         <div class="card p-4">
-                            <div class="d-flex align-items-center justify-content-between pb-3 mb-3 border-bottom">
-                                <div>
+                            <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center justify-content-between pb-3 mb-3 border-bottom">
+                                <div class="mb-3 mb-sm-0">
                                     <h4 class="font-weight-bold mb-1 text-dark">Form Pengajuan Izin / Cuti</h4>
                                     <p class="text-muted small mb-0">Isi keterangan di bawah ini jika Anda tidak dapat hadir bekerja.</p>
                                 </div>
-                                <a href="index.php?m=awal" class="btn btn-sm btn-outline-secondary">
+                                <a href="index.php?m=awal" class="btn btn-sm btn-outline-secondary w-100 w-sm-auto text-center" style="white-space: nowrap;">
                                     <i class="fas fa-arrow-left mr-1"></i> Kembali
                                 </a>
                             </div>
@@ -166,9 +166,9 @@ $masa_kerja_display = hitungMasaKerja($tgl_masuk_karyawan);
                                     <input type="text" class="form-control bg-light" readonly value="<?= date('l, d F Y — H:i:s') ?> WIB">
                                 </div>
 
-                                <div class="mt-4 pt-2 border-top d-flex justify-content-end">
-                                    <a href="index.php?m=awal" class="btn btn-secondary mr-2">Batal</a>
-                                    <button type="submit" name="simpan" class="btn btn-primary font-weight-bold">
+                                <div class="mt-4 pt-3 border-top d-flex flex-column flex-sm-row justify-content-end">
+                                    <a href="index.php?m=awal" class="btn btn-secondary mb-2 mb-sm-0 mr-0 mr-sm-2 text-center w-100 w-sm-auto">Batal</a>
+                                    <button type="submit" name="simpan" class="btn btn-primary font-weight-bold text-center w-100 w-sm-auto">
                                         <i class="fas fa-paper-plane mr-1"></i> Kirim Pengajuan
                                     </button>
                                 </div>
