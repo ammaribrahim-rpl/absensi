@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login Owner — Absensi</title>
   <link rel="icon" href="../img/Fevicon.png" type="image/png">
-  <link href="../vendor/font-awesome-5/css/fontawesome-all.min.css" rel="stylesheet" media="all">
+  <link href="../vendors/fontawesome/css/all.min.css" rel="stylesheet" media="all">
   <link href="../vendor/bootstrap-4.1/bootstrap.min.css" rel="stylesheet" media="all">
   <link href="../css/modern-custom.css" rel="stylesheet" media="all">
   <style>
@@ -33,8 +33,9 @@
       margin: 0 auto 16px;
     }
     .brand-icon i {
-      font-size: 1.7rem;
-      color: #7e22ce;
+      font-size: 1.8rem !important;
+      color: #7e22ce !important;
+      line-height: 1 !important;
     }
     .btn-login-owner {
       background-color: #7e22ce !important;
