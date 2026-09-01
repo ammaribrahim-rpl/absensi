@@ -90,6 +90,10 @@ if (!$sudah_masuk) {
 } else {
     $status_absen = 4; // Sudah pulang
 }
+
+// Ambil pesan flash hasil absensi jika ada
+$flash_absen = $_SESSION['flash_absen'] ?? null;
+unset($_SESSION['flash_absen']);
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -467,6 +471,29 @@ if (!$sudah_masuk) {
                         </div>
                     </div>
 
+                    <!-- CARD KONTROL AUDIO & TEST SUARA -->
+                    <div class="card p-3 mt-3" style="border: 1px dashed var(--color-border); background: #fdfdfd;">
+                        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                            <div class="d-flex align-items-center mb-2 mb-sm-0">
+                                <div class="avatar-initial avatar-sm mr-2" style="background:#eef2ff;color:#4f46e5;">
+                                    <i class="fas fa-volume-up"></i>
+                                </div>
+                                <div>
+                                    <span class="font-weight-bold text-dark d-block" style="font-size:0.85rem;">Notifikasi Suara Aktif</span>
+                                    <span class="text-muted small">Folder: <code>absensi/audio/</code></span>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center flex-wrap" style="gap: 8px;">
+                                <button type="button" class="btn btn-sm btn-outline-danger font-weight-bold" onclick="AbsenAudio.test('terlambat')" title="Tes suara saat terlambat">
+                                    <i class="fas fa-play mr-1"></i> Tes "Terlambat"
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-warning font-weight-bold" onclick="AbsenAudio.test('sisa_5menit')" title="Tes suara saat sisa 5 menit">
+                                    <i class="fas fa-play mr-1"></i> Tes "5 Menit"
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -478,9 +505,44 @@ if (!$sudah_masuk) {
 <script src="../vendor/bootstrap-4.1/popper.min.js"></script>
 <script src="../vendor/bootstrap-4.1/bootstrap.min.js"></script>
 <script src="../vendor/perfect-scrollbar/perfect-scrollbar.js"></script>
+<script src="../vendor/sweetalert/sweetalert.min.js"></script>
 <script src="../js/main.js"></script>
+<script src="../js/audio_notif.js"></script>
 
 <script>
+// ── Flash Absensi & Trigger Suara Terlambat ──────────────────────────────────
+<?php if ($flash_absen): ?>
+(function() {
+    const flash = <?= json_encode($flash_absen) ?>;
+    if (flash.success) {
+        if (flash.is_telat === 1) {
+            // Putar audio terlambat
+            AbsenAudio.playTerlambat();
+            swal({
+                title: "⚠️ Tercatat Terlambat",
+                text: `${flash.label} berhasil dicatat pada ${flash.waktu}.\n${flash.telat_msg ? flash.telat_msg.trim() : 'Kamu tercatat melebihi batas waktu.'}`,
+                icon: "warning",
+                button: "Mengerti"
+            });
+        } else {
+            swal({
+                title: "Absensi Berhasil",
+                text: `${flash.label} berhasil dicatat pada ${flash.waktu}.`,
+                icon: "success",
+                button: "Tutup"
+            });
+        }
+    } else {
+        swal({
+            title: "Gagal",
+            text: flash.message || "Gagal menyimpan absensi.",
+            icon: "error",
+            button: "Tutup"
+        });
+    }
+})();
+<?php endif; ?>
+
 // ── Realtime Clock ────────────────────────────────────────────────────────────
 function updateClock() {
     const now = new Date();
@@ -491,17 +553,43 @@ function updateClock() {
 setInterval(updateClock, 1000);
 updateClock();
 
-// ── Countdown Istirahat ───────────────────────────────────────────────────────
+// ── Countdown Istirahat & Trigger Audio Peringatan ────────────────────────────
 <?php if ($status_absen === 2 && $sisa_istirahat_detik > 0): ?>
 let sisaDetik = <?= (int) $sisa_istirahat_detik ?>;
+let played5MinWarning = <?= ($sisa_istirahat_detik <= 300) ? 'true' : 'false' ?>;
+let playedOvertimeWarning = false;
 const cdEl = document.getElementById('countdownTimer');
+
 function updateCountdown() {
     if (!cdEl) return;
     if (sisaDetik <= 0) {
         cdEl.textContent = '00:00 ⚠️';
         cdEl.style.color = '#fca5a5';
+        if (!playedOvertimeWarning) {
+            playedOvertimeWarning = true;
+            AbsenAudio.playTerlambat();
+            swal({
+                title: "⏰ Waktu Istirahat Habis!",
+                text: "Durasi istirahat 1 jam telah terlewati. Segera lakukan absensi 'Selesai Istirahat' agar tidak tercatat semakin telat.",
+                icon: "warning",
+                button: "Absen Sekarang"
+            });
+        }
         return;
     }
+
+    // Trigger suara saat tersisa tepat 5 menit (300 detik) atau pertama kali masuk < 5 menit
+    if (sisaDetik === 300 || (sisaDetik < 300 && !played5MinWarning)) {
+        played5MinWarning = true;
+        AbsenAudio.playSisa5Menit();
+        swal({
+            title: "⏰ Waktu Tersisa 5 Menit!",
+            text: "Waktu istirahat kamu tinggal 5 menit lagi. Harap bersiap kembali bekerja dan lakukan absensi tepat waktu.",
+            icon: "info",
+            button: "Mengerti"
+        });
+    }
+
     const m = String(Math.floor(sisaDetik / 60)).padStart(2, '0');
     const s = String(sisaDetik % 60).padStart(2, '0');
     cdEl.textContent = `${m}:${s}`;
@@ -519,11 +607,19 @@ function konfirmasiAbsen(tipe, label) {
 }
 
 // ── Polling Notifikasi (setiap 30 detik) ─────────────────────────────────────
+let lastNotifCount = <?= (int) $notif_count ?>;
 function pollNotifikasi() {
     fetch('api_notif.php')
         .then(r => r.json())
         .then(data => {
             const cnt = data.count || 0;
+            if (cnt > lastNotifCount && data.items && data.items.length > 0) {
+                const newest = data.items[0];
+                if (newest.tipe === 'telat_masuk' || newest.tipe === 'telat_istirahat') {
+                    AbsenAudio.playTerlambat();
+                }
+            }
+            lastNotifCount = cnt;
             ['notifBadgeMobile', 'notifBadgeDesktop'].forEach(id => {
                 const el = document.getElementById(id);
                 if (!el) return;

@@ -128,22 +128,79 @@ $query_pengajuan = mysqli_query($koneksi, "SELECT * FROM tb_keterangan ORDER BY 
         }
         .table-responsive {
             background: #ffffff;
-            border-radius: 12px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
         }
         .badge-proses {
             background-color: #fef3c7 !important;
             color: #d97706 !important;
             border: 1px solid #fde68a;
+            font-size: 0.72rem !important;
+            padding: 2px 8px !important;
         }
         .badge-disetujui {
             background-color: #dcfce7 !important;
             color: #15803d !important;
             border: 1px solid #bbf7d0;
+            font-size: 0.72rem !important;
+            padding: 2px 8px !important;
         }
         .badge-ditolak {
             background-color: #fee2e2 !important;
             color: #b91c1c !important;
             border: 1px solid #fecaca;
+            font-size: 0.72rem !important;
+            padding: 2px 8px !important;
+        }
+
+        /* ── Compact Table Styling ── */
+        .table-compact {
+            width: 100%;
+            table-layout: auto;
+            margin-bottom: 0 !important;
+        }
+        .table-compact th {
+            font-size: 0.7rem !important;
+            font-weight: 700 !important;
+            letter-spacing: 0.04em !important;
+            text-transform: uppercase !important;
+            color: #6b7280 !important;
+            padding: 10px 10px !important;
+            white-space: nowrap !important;
+            background: #f8fafc !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+            border-top: none !important;
+        }
+        .table-compact td {
+            font-size: 0.8rem !important;
+            padding: 9px 10px !important;
+            vertical-align: middle !important;
+            border-top: 1px solid #f1f5f9 !important;
+            color: #1e2228 !important;
+        }
+        .avatar-initial-compact {
+            width: 26px;
+            height: 26px;
+            min-width: 26px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            border-radius: 50%;
+            background: #eef2ff;
+            color: #4f46e5;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+        .btn-action-compact {
+            padding: 4px 8px !important;
+            font-size: 0.73rem !important;
+            font-weight: 600 !important;
+            border-radius: 6px !important;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            line-height: 1.2 !important;
         }
     </style>
 </head>
@@ -275,17 +332,17 @@ $query_pengajuan = mysqli_query($koneksi, "SELECT * FROM tb_keterangan ORDER BY 
                             </div>
 
                             <div class="table-responsive">
-                                <table class="table">
+                                <table class="table table-compact">
                                     <thead>
                                         <tr>
-                                            <th>No</th>
-                                            <th>Nama Karyawan</th>
-                                            <th>Kategori</th>
-                                            <th>Waktu Cuti / Izin</th>
-                                            <th>Alasan / Keterangan</th>
-                                            <th>Waktu Pengajuan</th>
-                                            <th>Status</th>
-                                            <th class="text-center">Aksi</th>
+                                            <th style="width: 38px; text-align: center;">No</th>
+                                            <th style="width: 17%;">Nama Karyawan</th>
+                                            <th style="width: 80px; text-align: center;">Kategori</th>
+                                            <th style="width: 16%;">Waktu Cuti / Izin</th>
+                                            <th style="width: 22%;">Alasan / Keterangan</th>
+                                            <th style="width: 14%;">Waktu Pengajuan</th>
+                                            <th style="width: 85px; text-align: center;">Status</th>
+                                            <th style="width: 135px; text-align: center;">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -313,41 +370,50 @@ $query_pengajuan = mysqli_query($koneksi, "SELECT * FROM tb_keterangan ORDER BY 
                                             // Hitung waktu & durasi cuti/izin
                                             $tgl_m = !empty($row['tgl_mulai']) ? date('d/m/Y', strtotime($row['tgl_mulai'])) : '';
                                             $tgl_s = !empty($row['tgl_selesai']) ? date('d/m/Y', strtotime($row['tgl_selesai'])) : '';
-                                            $durasi_info = '-';
+                                            $durasi_info = '<span class="text-muted">-</span>';
                                             if (!empty($tgl_m) && !empty($tgl_s)) {
                                                 $d1 = new DateTime($row['tgl_mulai']);
                                                 $d2 = new DateTime($row['tgl_selesai']);
                                                 $diff_hari = $d1->diff($d2)->days + 1;
                                                 if ($tgl_m === $tgl_s) {
-                                                    $durasi_info = "<strong>$tgl_m</strong><br><span class='badge badge-primary font-weight-bold'>1 Hari</span>";
+                                                    $durasi_info = "<span class='font-weight-bold d-block text-dark' style='font-size:0.78rem;'>$tgl_m</span><span class='badge badge-primary font-weight-bold' style='font-size:0.65rem;padding:1px 6px;'>1 Hari</span>";
                                                 } else {
-                                                    $durasi_info = "<strong>$tgl_m</strong> s/d <strong>$tgl_s</strong><br><span class='badge badge-primary font-weight-bold'>$diff_hari Hari</span>";
+                                                    $durasi_info = "<span class='font-weight-bold d-block text-dark' style='font-size:0.75rem;line-height:1.2;'>$tgl_m - $tgl_s</span><span class='badge badge-primary font-weight-bold' style='font-size:0.65rem;padding:1px 6px;'>$diff_hari Hari</span>";
                                                 }
+                                            }
+
+                                            // Format waktu pengajuan agar ringkas
+                                            $waktu_raw = $row['waktu'] ?? '';
+                                            $waktu_formatted = htmlspecialchars($waktu_raw);
+                                            if (preg_match('/(\d{2}-\d{2}-\d{4})\s+(\d{2}:\d{2})/', $waktu_raw, $m)) {
+                                                $waktu_formatted = "<span class='font-weight-bold d-block text-dark' style='font-size:0.78rem;'>{$m[1]}</span><span class='text-muted' style='font-size:0.7rem;'>{$m[2]} WIB</span>";
+                                            } elseif (strtotime($waktu_raw)) {
+                                                $waktu_formatted = "<span class='font-weight-bold d-block text-dark' style='font-size:0.78rem;'>" . date('d/m/Y', strtotime($waktu_raw)) . "</span><span class='text-muted' style='font-size:0.7rem;'>" . date('H:i', strtotime($waktu_raw)) . " WIB</span>";
                                             }
                                         ?>
                                         <tr>
-                                            <td><?= $no++ ?></td>
+                                            <td style="text-align: center; color:#6b7280; font-weight:600;"><?= $no++ ?></td>
                                             <td>
                                                 <div class="d-flex align-items-center">
-                                                    <div class="avatar-initial avatar-sm mr-2"><?= strtoupper(substr($row['nama'], 0, 1)) ?></div>
-                                                    <span class="font-weight-bold text-dark"><?= htmlspecialchars($row['nama']) ?></span>
+                                                    <div class="avatar-initial-compact mr-2"><?= strtoupper(substr($row['nama'], 0, 1)) ?></div>
+                                                    <span class="font-weight-bold text-dark" style="font-size:0.8rem;"><?= htmlspecialchars($row['nama']) ?></span>
                                                 </div>
                                             </td>
-                                            <td><span class="badge-modern badge-jabatan" style="font-size:0.75rem; padding:3px 8px;"><?= htmlspecialchars($row['keterangan']) ?></span></td>
-                                            <td><small><?= $durasi_info ?></small></td>
-                                            <td style="max-width: 220px; white-space: normal; font-size: 0.85rem;"><?= htmlspecialchars($row['alasan']) ?></td>
-                                            <td><small class="text-muted"><?= htmlspecialchars($row['waktu']) ?></small></td>
-                                            <td><span class="badge-modern <?= $badge_class ?>"><?= $status ?></span></td>
-                                            <td class="text-center" style="white-space: nowrap;">
+                                            <td style="text-align: center;"><span class="badge-modern badge-jabatan" style="font-size:0.7rem; padding:2px 7px;"><?= htmlspecialchars($row['keterangan']) ?></span></td>
+                                            <td><?= $durasi_info ?></td>
+                                            <td style="font-size: 0.78rem; line-height: 1.35; color: #374151; word-break: break-word;"><?= htmlspecialchars($row['alasan']) ?></td>
+                                            <td><?= $waktu_formatted ?></td>
+                                            <td style="text-align: center;"><span class="badge-modern <?= $badge_class ?>"><?= $status ?></span></td>
+                                            <td style="text-align: center; white-space: nowrap;">
                                                 <?php if ($status === 'Proses'): ?>
-                                                    <a href="?action=approve&id=<?= $row['id'] ?>" class="btn btn-sm btn-success mr-1 px-3" onclick="return confirm('Setujui pengajuan ini?');">
-                                                        <i class="fas fa-check mr-1"></i> Setujui
+                                                    <a href="?action=approve&id=<?= $row['id'] ?>" class="btn btn-success btn-action-compact mr-1" onclick="return confirm('Setujui pengajuan ini?');" title="Setujui">
+                                                        <i class="fas fa-check"></i> Setujui
                                                     </a>
-                                                    <a href="?action=reject&id=<?= $row['id'] ?>" class="btn btn-sm btn-danger px-3" onclick="return confirm('Tolak pengajuan ini?');">
-                                                        <i class="fas fa-times mr-1"></i> Tolak
+                                                    <a href="?action=reject&id=<?= $row['id'] ?>" class="btn btn-danger btn-action-compact" onclick="return confirm('Tolak pengajuan ini?');" title="Tolak">
+                                                        <i class="fas fa-times"></i> Tolak
                                                     </a>
                                                 <?php else: ?>
-                                                    <a href="?action=reset&id=<?= $row['id'] ?>" class="btn btn-sm btn-outline-secondary px-2" style="font-size:0.75rem;">
+                                                    <a href="?action=reset&id=<?= $row['id'] ?>" class="btn btn-outline-secondary btn-action-compact" title="Reset ke Proses">
                                                         <i class="fas fa-undo"></i> Reset
                                                     </a>
                                                 <?php endif; ?>

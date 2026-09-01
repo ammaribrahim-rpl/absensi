@@ -83,7 +83,11 @@ $result = mysqli_stmt_execute($stmt_save);
 mysqli_stmt_close($stmt_save);
 
 if (!$result) {
-    echo "<script>alert('Gagal menyimpan absensi. Silakan coba lagi.'); window.location.href='index.php?m=awal';</script>";
+    $_SESSION['flash_absen'] = [
+        'success' => false,
+        'message' => 'Gagal menyimpan absensi. Silakan coba lagi.'
+    ];
+    header('location: index.php?m=awal');
     exit;
 }
 
@@ -119,7 +123,14 @@ $label_map = [
 $label = $label_map[$tipe] ?? 'Absen';
 $telat_msg = ($is_telat && $tipe === 'masuk') ? ' (Terlambat)' : (($is_telat && $tipe === 'istirahat_selesai') ? ' (Istirahat melebihi 1 jam)' : '');
 
-echo "<script>
-    alert('$label berhasil dicatat$telat_msg');
-    window.location.href = 'index.php?m=awal';
-</script>";
+$_SESSION['flash_absen'] = [
+    'success'   => true,
+    'label'     => $label,
+    'tipe'      => $tipe,
+    'is_telat'  => (int) $is_telat,
+    'telat_msg' => $telat_msg,
+    'waktu'     => date('H:i:s')
+];
+
+header('location: index.php?m=awal');
+exit;

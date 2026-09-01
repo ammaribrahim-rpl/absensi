@@ -171,6 +171,29 @@ function tipeIcon(string $tipe): string {
                     </div>
                     <?php endif; ?>
 
+                    <!-- CARD KONTROL AUDIO & TEST SUARA -->
+                    <div class="card p-3 mt-3" style="border: 1px dashed var(--color-border); background: #fdfdfd;">
+                        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                            <div class="d-flex align-items-center mb-2 mb-sm-0">
+                                <div class="avatar-initial avatar-sm mr-2" style="background:#eef2ff;color:#4f46e5;">
+                                    <i class="fas fa-volume-up"></i>
+                                </div>
+                                <div>
+                                    <span class="font-weight-bold text-dark d-block" style="font-size:0.85rem;">Notifikasi Suara Aktif</span>
+                                    <span class="text-muted small">Folder: <code>absensi/audio/</code></span>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center flex-wrap" style="gap: 8px;">
+                                <button type="button" class="btn btn-sm btn-outline-danger font-weight-bold" onclick="AbsenAudio.test('terlambat')" title="Tes suara saat terlambat">
+                                    <i class="fas fa-play mr-1"></i> Tes "Terlambat"
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-warning font-weight-bold" onclick="AbsenAudio.test('sisa_5menit')" title="Tes suara saat sisa 5 menit">
+                                    <i class="fas fa-play mr-1"></i> Tes "5 Menit"
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -182,5 +205,6 @@ function tipeIcon(string $tipe): string {
 <script src="../vendor/bootstrap-4.1/bootstrap.min.js"></script>
 <script src="../vendor/perfect-scrollbar/perfect-scrollbar.js"></script>
 <script src="../js/main.js"></script>
+<script src="../js/audio_notif.js"></script>
 </body>
 </html>
