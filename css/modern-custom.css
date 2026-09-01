@@ -49,6 +49,11 @@
 /* ─── 3. BASE RESET ──────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
 
+html, body {
+  min-height: 100vh;
+  height: 100%;
+}
+
 body {
   font-family: var(--font-main) !important;
   font-size: 14px;
@@ -78,6 +83,13 @@ h1, h2, h3, h4, h5, h6 {
   background-color: var(--sidebar-bg) !important;
   border-right: none !important;
   box-shadow: 2px 0 8px rgba(0,0,0,0.15) !important;
+  position: fixed !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  height: 100vh !important;
+  overflow-y: auto !important;
+  z-index: 1000 !important;
 }
 
 .menu-sidebar .logo {
@@ -144,6 +156,9 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--color-surface) !important;
   border-bottom: 1px solid var(--color-border) !important;
   box-shadow: var(--shadow-xs) !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 999 !important;
 }
 
 .header-desktop .header-wrap {
@@ -241,6 +256,22 @@ h1, h2, h3, h4, h5, h6 {
 /* ─── 6. PAGE BACKGROUND ─────────────────────────────────────────────────── */
 .main-content, .section__content, .page-wrapper, .page-container {
   background-color: var(--color-bg) !important;
+}
+
+.page-wrapper {
+  min-height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.page-container {
+  min-height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.main-content {
+  flex: 1 0 auto !important;
 }
 
 /* ─── 7. CARDS ───────────────────────────────────────────────────────────── */

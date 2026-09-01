@@ -72,7 +72,7 @@
     <!-- Brand -->
     <div class="brand">
       <div class="brand-icon">
-        <i class="fas fa-user-secret"></i>
+        <i class="fas fa-crown"></i>
       </div>
       <h1>ABSENSI</h1>
       <p>Portal Login Owner Executive</p>

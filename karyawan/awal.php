@@ -108,6 +108,12 @@ unset($_SESSION['flash_absen']);
     <link href="../css/theme.css" rel="stylesheet">
     <link href="../css/modern-custom.css" rel="stylesheet">
     <style>
+        /* ── Theme Overrides (Purple Dark Sidebar) ── */
+        .menu-sidebar { background-color: #170d2b !important; }
+        .menu-sidebar .logo { background-color: #170d2b !important; border-bottom: 1px solid rgba(255,255,255,0.08) !important; }
+        .header-mobile { background: #170d2b !important; }
+        .header-mobile .navbar-mobile, .header-mobile .navbar-mobile .navbar-mobile__list { background: #170d2b !important; }
+
         /* ── Absensi Button Grid ── */
         .absen-grid {
             display: grid;
@@ -224,7 +230,7 @@ unset($_SESSION['flash_absen']);
             <div class="container-fluid">
                 <div class="header-mobile-inner">
                     <a href="index.php?m=awal" class="logo">
-                        <h3><i class="fas fa-fingerprint mr-2"></i>ABSENSI</h3>
+                        <h3><i class="fas fa-fingerprint mr-2" style="color:#818cf8;"></i>ABSENSI</h3>
                     </a>
                     <div class="d-flex align-items-center gap-2">
                         <a href="notifikasi.php" class="notif-bell-wrapper mr-3" style="color:#fff;">
@@ -256,9 +262,9 @@ unset($_SESSION['flash_absen']);
 
     <!-- MENU SIDEBAR -->
     <aside class="menu-sidebar d-none d-lg-block">
-        <div class="logo">
+        <div class="logo" style="background-color:#170d2b; border-bottom:1px solid rgba(255,255,255,0.08);">
             <a href="index.php?m=awal">
-                <h3><i class="fas fa-fingerprint mr-2"></i>ABSENSI</h3>
+                <h3 style="color:#ffffff;"><i class="fas fa-fingerprint mr-2" style="color:#818cf8;"></i>ABSENSI</h3>
             </a>
         </div>
         <div class="menu-sidebar__content js-scrollbar1">

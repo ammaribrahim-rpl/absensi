@@ -372,7 +372,7 @@ $q_list = mysqli_query($koneksi, $sql_list);
                                                 </span>
                                             </td>
                                             <td style="text-align: center; white-space: nowrap;">
-                                                <a href="../admin/karyawan_edit.php?id=<?= urlencode($row['id_karyawan']) ?>" class="btn btn-warning btn-action-compact mr-1" title="Edit">
+                                                <a href="karyawan_edit.php?id_karyawan=<?= urlencode($row['id_karyawan']) ?>" class="btn btn-warning btn-action-compact mr-1" title="Edit">
                                                     <i class="fas fa-edit"></i> Edit
                                                 </a>
                                                 <a href="karyawan.php?hapus_id=<?= urlencode($row['id_karyawan']) ?>" class="btn btn-danger btn-action-compact" onclick="return confirm('Apakah Anda yakin ingin menghapus data karyawan <?= htmlspecialchars(addslashes($row['nama'])) ?>?');" title="Hapus">

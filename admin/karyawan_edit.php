@@ -34,6 +34,12 @@ $username = $_SESSION['username'];
     <link href="../css/theme.css" rel="stylesheet">
     <link href="../css/modern-custom.css" rel="stylesheet">
 
+    <style>
+        .menu-sidebar { background-color: #170d2b !important; }
+        .menu-sidebar .logo { background-color: #170d2b !important; border-bottom: 1px solid rgba(255,255,255,0.08) !important; }
+        .header-mobile { background: #170d2b !important; }
+        .header-mobile .navbar-mobile, .header-mobile .navbar-mobile .navbar-mobile__list { background: #170d2b !important; }
+    </style>
 </head>
 
 <body>
@@ -43,7 +49,7 @@ $username = $_SESSION['username'];
                 <div class="container-fluid">
                     <div class="header-mobile-inner">
                         <a href="admin.php" class="logo">
-                            <h3><i class="fas fa-fingerprint mr-2"></i>ABSENSI</h3>
+                            <h3><i class="fas fa-fingerprint mr-2" style="color:#818cf8;"></i>ABSENSI</h3>
                         </a>
                         <button class="hamburger" type="button">
                             <i class="fas fa-bars"></i>
@@ -54,7 +60,7 @@ $username = $_SESSION['username'];
             <nav class="navbar-mobile">
                 <div class="container-fluid">
                     <ul class="navbar-mobile__list list-unstyled">
-                        <li><a href="admin.php"><i class="fas fa-home"></i> Beranda Admin</a></li>
+                        <li><a href="admin.php"><i class="fas fa-chart-line"></i> Beranda Admin</a></li>
                         <li class="active"><a href="datakaryawan.php"><i class="fas fa-users"></i> Data Karyawan</a></li>
                         <li><a href="datajabatan.php"><i class="fas fa-briefcase"></i> Data Jabatan</a></li>
                         <li><a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
@@ -66,15 +72,15 @@ $username = $_SESSION['username'];
 
         <!-- MENU SIDEBAR -->
         <aside class="menu-sidebar d-none d-lg-block">
-            <div class="logo">
+            <div class="logo" style="background-color:#170d2b; border-bottom:1px solid rgba(255,255,255,0.08);">
                 <a href="admin.php">
-                    <h3><i class="fas fa-fingerprint mr-2"></i>ABSENSI</h3>
+                    <h3 style="color:#ffffff;"><i class="fas fa-fingerprint mr-2" style="color:#818cf8;"></i>ABSENSI</h3>
                 </a>
             </div>
             <div class="menu-sidebar__content js-scrollbar1">
                 <nav class="navbar-sidebar">
                     <ul class="list-unstyled navbar__list">
-                    <li><a href="admin.php"><i class="fas fa-home"></i> Beranda Admin</a></li>
+                    <li><a href="admin.php"><i class="fas fa-chart-line"></i> Beranda Admin</a></li>
                     <li class="active"><a href="datakaryawan.php"><i class="fas fa-users"></i> Data Karyawan</a></li>
                     <li><a href="datajabatan.php"><i class="fas fa-briefcase"></i> Data Jabatan</a></li>
                     <li><a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
