@@ -221,6 +221,7 @@ $total_semua = count($records);
                         <li><a href="jabatan.php"><i class="fas fa-briefcase"></i> Data Jabatan</a></li>
                         <li><a href="approval.php"><i class="fas fa-check-double"></i> Approval Cuti</a></li>
                         <li class="active"><a href="laporan.php"><i class="fas fa-file-alt"></i> Rekap Kehadiran</a></li>
+                        <li><a href="ganti_password.php"><i class="fas fa-key"></i> Ganti Password</a></li>
                         <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout Owner</a></li>
                     </ul>
                 </div>
@@ -254,6 +255,9 @@ $total_semua = count($records);
                         </li>
                         <li class="active">
                             <a href="laporan.php"><i class="fas fa-file-alt"></i> Rekap Kehadiran</a>
+                        </li>
+                        <li>
+                            <a href="ganti_password.php"><i class="fas fa-key"></i> Ganti Password</a>
                         </li>
                         <li>
                             <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout Owner</a>

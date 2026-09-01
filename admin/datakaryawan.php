@@ -74,6 +74,7 @@ $username = $_SESSION['username'];
                         <li><a href="admin.php"><i class="fas fa-chart-line"></i> Beranda Admin</a></li>
                         <li class="active"><a href="datakaryawan.php"><i class="fas fa-users"></i> Data Karyawan</a></li>
                         <li><a href="datajabatan.php"><i class="fas fa-briefcase"></i> Data Jabatan</a></li>
+                        <li><a href="ganti_password.php"><i class="fas fa-key"></i> Ganti Password</a></li>
                         <li><a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                     </ul>
                 </div>
@@ -93,6 +94,7 @@ $username = $_SESSION['username'];
                         <li><a href="admin.php"><i class="fas fa-chart-line"></i> Beranda Admin</a></li>
                         <li class="active"><a href="datakaryawan.php"><i class="fas fa-users"></i> Data Karyawan</a></li>
                         <li><a href="datajabatan.php"><i class="fas fa-briefcase"></i> Data Jabatan</a></li>
+                        <li><a href="ganti_password.php"><i class="fas fa-key"></i> Ganti Password</a></li>
                         <li><a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                     </ul>
                 </nav>
