@@ -12,10 +12,11 @@ $id_karyawan = $_SESSION['idsi']   ?? '';
 $initial     = strtoupper(substr($nama, 0, 1));
 $tanggal_hari = date('d-m-Y');
 
-// ─── Info masa kerja & tanggal masuk ─────────────────────────────────────────
+// ─── Info masa kerja, tanggal masuk, & jabatan ──────────────────────────────
 $tgl_masuk_karyawan = $id_karyawan;
+$jabatan_karyawan   = '';
 if (!empty($id_karyawan)) {
-    $stmt_tm = mysqli_prepare($koneksi, "SELECT tgl_masuk FROM tb_karyawan WHERE id_karyawan = ? LIMIT 1");
+    $stmt_tm = mysqli_prepare($koneksi, "SELECT tgl_masuk, jabatan FROM tb_karyawan WHERE id_karyawan = ? LIMIT 1");
     if ($stmt_tm) {
         mysqli_stmt_bind_param($stmt_tm, 's', $id_karyawan);
         mysqli_stmt_execute($stmt_tm);
@@ -24,12 +25,16 @@ if (!empty($id_karyawan)) {
             if (!empty($row_tm['tgl_masuk'])) {
                 $tgl_masuk_karyawan = $row_tm['tgl_masuk'];
             }
+            $jabatan_karyawan = $row_tm['jabatan'] ?? '';
         }
         mysqli_stmt_close($stmt_tm);
     }
 }
 $tgl_masuk_display  = getFormattedTglMasuk($tgl_masuk_karyawan);
 $masa_kerja_display = hitungMasaKerja($tgl_masuk_karyawan);
+
+$is_k1       = (strtoupper(trim($jabatan_karyawan)) === 'K1');
+$is_operator = (strtoupper(trim($jabatan_karyawan)) === 'OPERATOR');
 
 // ─── Status Absensi Hari Ini ──────────────────────────────────────────────────
 // Ambil semua record absen hari ini berdasar tipe
@@ -55,11 +60,13 @@ $sudah_istirahat_selesai = isset($absen_hari_ini['istirahat_selesai']);
 $sudah_pulang            = isset($absen_hari_ini['pulang']);
 
 // Hitung sisa waktu istirahat (jika sedang istirahat)
+// Khusus K1 = 1 jam 30 menit (5400 detik), Role lain = 1 jam (3600 detik)
 $sisa_istirahat_detik = 0;
 $sedang_istirahat = $sudah_istirahat_mulai && !$sudah_istirahat_selesai;
 if ($sedang_istirahat) {
     $ts_mulai = parseWaktuToTimestamp($absen_hari_ini['istirahat_mulai']['waktu']);
-    $ts_batas = $ts_mulai + 3600; // +1 jam
+    $durasi_max_detik = $is_k1 ? 5400 : 3600; // 90 menit vs 60 menit
+    $ts_batas = $ts_mulai + $durasi_max_detik;
     $sisa_istirahat_detik = max(0, $ts_batas - time());
 }
 
@@ -381,7 +388,32 @@ unset($_SESSION['flash_absen']);
                         </div>
                     </div>
 
-                    <?php if ($status_absen === 4): ?>
+                    <?php if ($is_operator): ?>
+                    <!-- OPERATOR TESTING MODE BANNER -->
+                    <div class="card p-3 mb-3" style="background:#fffbeb; border:1px solid #fde68a; border-radius:12px;">
+                        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-initial avatar-sm mr-2" style="background:#fef3c7; color:#d97706;">
+                                    <i class="fas fa-vial"></i>
+                                </div>
+                                <div>
+                                    <span class="font-weight-bold text-dark d-block" style="font-size:0.85rem;">Hak Khusus Testing System Absensi</span>
+                                    <span class="text-muted small">Role: <strong>Operator</strong> (Akses bebas uji coba seluruh tombol)</span>
+                                </div>
+                            </div>
+                            <form action="dt_absen_sv.php" method="POST" style="display:inline;">
+                                <input type="hidden" name="id_karyawan" value="<?= htmlspecialchars($id_karyawan) ?>">
+                                <input type="hidden" name="nama" value="<?= htmlspecialchars($nama) ?>">
+                                <input type="hidden" name="tipe_absen" value="reset_test">
+                                <button type="submit" class="btn btn-sm btn-danger font-weight-bold" onclick="return confirm('Reset semua presensi testing hari ini untuk pengujian ulang?');">
+                                    <i class="fas fa-redo-alt mr-1"></i> Reset Presensi Testing
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+
+                    <?php if ($status_absen === 4 && !$is_operator): ?>
                     <!-- SELESAI -->
                     <div class="done-card mb-3">
                         <i class="fas fa-check-circle"></i>
@@ -392,21 +424,39 @@ unset($_SESSION['flash_absen']);
                     <?php elseif ($status_absen === 2 && $sisa_istirahat_detik > 0): ?>
                     <!-- COUNTDOWN ISTIRAHAT -->
                     <div class="countdown-box mb-3">
-                        <div class="cd-label"><i class="fas fa-utensils mr-1"></i> Waktu Istirahat Tersisa</div>
+                        <div class="cd-label">
+                            <i class="fas fa-utensils mr-1"></i> Waktu Istirahat Tersisa 
+                            <span class="badge badge-light ml-1" style="font-size:0.75rem; color:#0e7490;"><?= $is_k1 ? 'Batas 1 Jam 30 Menit (Role K1)' : 'Batas 1 Jam' ?></span>
+                        </div>
                         <div class="cd-time" id="countdownTimer">--:--</div>
                         <div class="cd-sub">Kembali sebelum waktu habis agar tidak tercatat terlambat</div>
                     </div>
 
                     <?php endif; ?>
 
-                    <?php if ($status_absen < 4): ?>
+                    <?php if ($status_absen < 4 || $is_operator): ?>
                     <!-- TOMBOL ABSENSI -->
                     <form action="dt_absen_sv.php" method="POST" id="formAbsen">
                         <input type="hidden" name="id_karyawan" value="<?= htmlspecialchars($id_karyawan) ?>">
                         <input type="hidden" name="nama" value="<?= htmlspecialchars($nama) ?>">
                         <input type="hidden" name="tipe_absen" id="inputTipeAbsen" value="">
                         <div class="absen-grid">
-                            <?php if ($status_absen === 0): ?>
+                            <?php if ($is_operator): ?>
+                            <!-- FITUR HAK KHUSUS TESTING OPERATOR (Semua Tombol Bebas Ditekan) -->
+                            <button type="button" class="btn-absen-type btn-masuk" onclick="konfirmasiAbsen('masuk','[TESTING] Absen Masuk')">
+                                <i class="fas fa-sign-in-alt"></i> 1. ABSEN MASUK
+                            </button>
+                            <button type="button" class="btn-absen-type btn-istirahat" onclick="konfirmasiAbsen('istirahat_mulai','[TESTING] Mulai Istirahat (1.5 jam)')">
+                                <i class="fas fa-utensils"></i> 2. MULAI ISTIRAHAT
+                            </button>
+                            <button type="button" class="btn-absen-type btn-kembali" onclick="konfirmasiAbsen('istirahat_selesai','[TESTING] Selesai Istirahat')">
+                                <i class="fas fa-undo"></i> 3. SELESAI ISTIRAHAT
+                            </button>
+                            <button type="button" class="btn-absen-type btn-pulang" onclick="konfirmasiAbsen('pulang','[TESTING] Absen Pulang')">
+                                <i class="fas fa-sign-out-alt"></i> 4. ABSEN PULANG
+                            </button>
+
+                            <?php elseif ($status_absen === 0): ?>
                             <!-- TOMBOL MASUK -->
                             <button type="button" class="btn-absen-type btn-masuk" onclick="konfirmasiAbsen('masuk','Absen Masuk Kerja')">
                                 <i class="fas fa-sign-in-alt"></i> ABSEN MASUK
@@ -424,8 +474,8 @@ unset($_SESSION['flash_absen']);
                             <button type="button" class="btn-absen-type btn-done" disabled>
                                 <i class="fas fa-check"></i> SUDAH MASUK — <?= $sudah_masuk ? substr($absen_hari_ini['masuk']['waktu'], -14, 8) : '' ?> <?= isset($absen_hari_ini['masuk']['is_telat']) && $absen_hari_ini['masuk']['is_telat'] ? '⚠️ TELAT' : '' ?>
                             </button>
-                            <button type="button" class="btn-absen-type btn-istirahat" onclick="konfirmasiAbsen('istirahat_mulai','Mulai Istirahat (1 jam)')">
-                                <i class="fas fa-utensils"></i> MULAI ISTIRAHAT
+                            <button type="button" class="btn-absen-type btn-istirahat" onclick="konfirmasiAbsen('istirahat_mulai','Mulai Istirahat (<?= $is_k1 ? '1.5 jam' : '1 jam' ?>)')">
+                                <i class="fas fa-utensils"></i> MULAI ISTIRAHAT <?= $is_k1 ? '(1.5 JAM)' : '' ?>
                             </button>
                             <button type="button" class="btn-absen-type btn-pulang" onclick="konfirmasiAbsen('pulang','Absen Pulang Kerja')">
                                 <i class="fas fa-sign-out-alt"></i> ABSEN PULANG
@@ -555,7 +605,7 @@ function updateCountdown() {
             AbsenAudio.playTerlambat();
             swal({
                 title: "⏰ Waktu Istirahat Habis!",
-                text: "Durasi istirahat 1 jam telah terlewati. Segera lakukan absensi 'Selesai Istirahat' agar tidak tercatat semakin telat.",
+                text: "Durasi istirahat " + <?= json_encode($is_k1 ? '1 jam 30 menit' : '1 jam') ?> + " telah terlewati. Segera lakukan absensi 'Selesai Istirahat' agar tidak tercatat semakin telat.",
                 icon: "warning",
                 button: "Absen Sekarang"
             });
