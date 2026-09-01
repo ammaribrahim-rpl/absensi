@@ -33,6 +33,18 @@ if (!empty($id_karyawan)) {
 $tgl_masuk_display  = getFormattedTglMasuk($tgl_masuk_karyawan);
 $masa_kerja_display = hitungMasaKerja($tgl_masuk_karyawan);
 
+/**
+ * Ekstrak jam HH:MM dari string waktu format "Day, DD-MM-YYYY HH:MM:SS"
+ * Lebih aman daripada substr() dengan offset hardcoded.
+ */
+function extractJam($waktu) {
+    if (empty($waktu)) return '--:--';
+    $ts = parseWaktuToTimestamp($waktu);
+    if ($ts) return date('H:i', $ts);
+    // Fallback: ambil 8 karakter terakhir lalu substr 5
+    return substr(trim($waktu), -8, 5);
+}
+
 $is_k1       = (strtoupper(trim($jabatan_karyawan)) === 'K1');
 $is_operator = (strtoupper(trim($jabatan_karyawan)) === 'OPERATOR');
 
@@ -357,7 +369,7 @@ unset($_SESSION['flash_absen']);
                                 <i class="fas fa-sign-in-alt"></i>
                             </div>
                             <div class="ts-label">Masuk</div>
-                            <div class="ts-time"><?= $sudah_masuk ? substr($absen_hari_ini['masuk']['waktu'], -14, 8) : '--:--' ?></div>
+                            <div class="ts-time"><?= $sudah_masuk ? extractJam($absen_hari_ini['masuk']['waktu']) : '--:--' ?></div>
                         </div>
                         <div class="ts-divider <?= $sudah_masuk ? 'done' : '' ?>"></div>
                         <!-- Istirahat -->
@@ -366,7 +378,7 @@ unset($_SESSION['flash_absen']);
                                 <i class="fas fa-utensils"></i>
                             </div>
                             <div class="ts-label">Istirahat</div>
-                            <div class="ts-time"><?= $sudah_istirahat_mulai ? substr($absen_hari_ini['istirahat_mulai']['waktu'], -14, 8) : '--:--' ?></div>
+                            <div class="ts-time"><?= $sudah_istirahat_mulai ? extractJam($absen_hari_ini['istirahat_mulai']['waktu']) : '--:--' ?></div>
                         </div>
                         <div class="ts-divider <?= $sudah_istirahat_selesai ? 'done' : '' ?>"></div>
                         <!-- Kembali -->
@@ -375,7 +387,7 @@ unset($_SESSION['flash_absen']);
                                 <i class="fas fa-undo"></i>
                             </div>
                             <div class="ts-label">Kembali</div>
-                            <div class="ts-time"><?= $sudah_istirahat_selesai ? substr($absen_hari_ini['istirahat_selesai']['waktu'], -14, 8) : '--:--' ?></div>
+                            <div class="ts-time"><?= $sudah_istirahat_selesai ? extractJam($absen_hari_ini['istirahat_selesai']['waktu']) : '--:--' ?></div>
                         </div>
                         <div class="ts-divider <?= $sudah_pulang ? 'done' : '' ?>"></div>
                         <!-- Pulang -->
@@ -384,7 +396,7 @@ unset($_SESSION['flash_absen']);
                                 <i class="fas fa-sign-out-alt"></i>
                             </div>
                             <div class="ts-label">Pulang</div>
-                            <div class="ts-time"><?= $sudah_pulang ? substr($absen_hari_ini['pulang']['waktu'], -14, 8) : '--:--' ?></div>
+                            <div class="ts-time"><?= $sudah_pulang ? extractJam($absen_hari_ini['pulang']['waktu']) : '--:--' ?></div>
                         </div>
                     </div>
 
@@ -472,7 +484,7 @@ unset($_SESSION['flash_absen']);
                             <?php elseif ($status_absen === 1): ?>
                             <!-- Sudah masuk, belum istirahat -->
                             <button type="button" class="btn-absen-type btn-done" disabled>
-                                <i class="fas fa-check"></i> SUDAH MASUK — <?= $sudah_masuk ? substr($absen_hari_ini['masuk']['waktu'], -14, 8) : '' ?> <?= isset($absen_hari_ini['masuk']['is_telat']) && $absen_hari_ini['masuk']['is_telat'] ? '⚠️ TELAT' : '' ?>
+                                <i class="fas fa-check"></i> SUDAH MASUK — <?= $sudah_masuk ? extractJam($absen_hari_ini['masuk']['waktu']) : '' ?> <?= isset($absen_hari_ini['masuk']['is_telat']) && $absen_hari_ini['masuk']['is_telat'] ? '⚠️ TELAT' : '' ?>
                             </button>
                             <button type="button" class="btn-absen-type btn-istirahat" onclick="konfirmasiAbsen('istirahat_mulai','Mulai Istirahat (<?= $is_k1 ? '1.5 jam' : '1 jam' ?>)')">
                                 <i class="fas fa-utensils"></i> MULAI ISTIRAHAT <?= $is_k1 ? '(1.5 JAM)' : '' ?>
@@ -487,7 +499,7 @@ unset($_SESSION['flash_absen']);
                                 <i class="fas fa-check"></i> SUDAH MASUK
                             </button>
                             <button type="button" class="btn-absen-type btn-done" disabled>
-                                <i class="fas fa-utensils"></i> ISTIRAHAT — <?= $sudah_istirahat_mulai ? substr($absen_hari_ini['istirahat_mulai']['waktu'], -14, 8) : '' ?>
+                                <i class="fas fa-utensils"></i> ISTIRAHAT — <?= $sudah_istirahat_mulai ? extractJam($absen_hari_ini['istirahat_mulai']['waktu']) : '' ?>
                             </button>
                             <button type="button" class="btn-absen-type btn-kembali" onclick="konfirmasiAbsen('istirahat_selesai','Selesai Istirahat')">
                                 <i class="fas fa-undo"></i> SELESAI ISTIRAHAT

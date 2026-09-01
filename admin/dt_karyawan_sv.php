@@ -39,9 +39,17 @@ if (isset($_POST['simpan'])) {
     mysqli_stmt_close($cek_stmt);
 
     // Simpan karyawan baru
-    $query = "INSERT INTO tb_karyawan (id_karyawan, username, password, nama, tmp_tgl_lahir, jenkel, agama, alamat, no_tel, jabatan, foto) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    // Normalisasi tgl_masuk ke format YYYY-MM-DD untuk kolom tgl_masuk
+    $tgl_masuk_db = date('Y-m-d'); // default hari ini
+    if (preg_match('/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})/', $tgl_masuk, $m_tgl)) {
+        $tgl_masuk_db = sprintf('%04d-%02d-%02d', $m_tgl[3], $m_tgl[2], $m_tgl[1]);
+    } elseif (strtotime($tgl_masuk)) {
+        $tgl_masuk_db = date('Y-m-d', strtotime($tgl_masuk));
+    }
+
+    $query = "INSERT INTO tb_karyawan (id_karyawan, username, password, nama, tmp_tgl_lahir, jenkel, agama, alamat, no_tel, tgl_masuk, jabatan, foto) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt2 = mysqli_prepare($koneksi, $query);
-    mysqli_stmt_bind_param($stmt2, "sssssssssss", $id_karyawan, $username, $password, $nama, $tmp_tgl_lahir, $jenkel, $agama, $alamat, $no_tel, $jabatan, $foto);
+    mysqli_stmt_bind_param($stmt2, "ssssssssssss", $id_karyawan, $username, $password, $nama, $tmp_tgl_lahir, $jenkel, $agama, $alamat, $no_tel, $tgl_masuk_db, $jabatan, $foto);
     $success = mysqli_stmt_execute($stmt2);
     mysqli_stmt_close($stmt2);
 

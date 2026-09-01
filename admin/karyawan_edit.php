@@ -1,6 +1,6 @@
-<?php 
-require_once("../koneksi.php");
+<?php
 session_start();
+require_once("../koneksi.php");
 if (!isset($_SESSION['username'])) {
     header('location: ../index.php');
     exit;

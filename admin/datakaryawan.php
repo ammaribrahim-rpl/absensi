@@ -136,7 +136,7 @@ $username = $_SESSION['username'];
                         <div class="card p-3 mb-4">
                             <div class="row align-items-center">
                                 <div class="col-md-6 mb-2 mb-md-0">
-                                    <form method="GET" action="prospenkar.php" class="d-flex">
+                                    <form method="POST" action="prospenkar.php" class="d-flex">
                                         <input type="text" name="cari" class="form-control mr-2" placeholder="Cari nama atau tanggal masuk..." value="<?= htmlspecialchars($_GET['cari'] ?? '') ?>">
                                         <button type="submit" class="btn btn-primary font-weight-bold"><i class="fas fa-search mr-1"></i> Cari</button>
                                     </form>
