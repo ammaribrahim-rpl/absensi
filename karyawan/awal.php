@@ -560,6 +560,17 @@ unset($_SESSION['flash_absen']);
                 button: "Mengerti"
             });
         } else {
+            // Putar audio spesifik sesuai tipe absensi
+            if (flash.tipe === 'masuk') {
+                AbsenAudio.playAbsenMasuk();
+            } else if (flash.tipe === 'istirahat_mulai') {
+                AbsenAudio.playIstirahat();
+            } else if (flash.tipe === 'pulang') {
+                AbsenAudio.playPulang();
+            } else if (flash.tipe === 'istirahat_selesai') {
+                AbsenAudio.playAbsenMasuk();
+            }
+
             swal({
                 title: "Absensi Berhasil",
                 text: `${flash.label} berhasil dicatat pada ${flash.waktu}.`,
