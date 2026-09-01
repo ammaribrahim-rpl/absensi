@@ -5,7 +5,6 @@ if (!isset($_SESSION['owner_username'])) {
     exit;
 }
 include '../koneksi.php';
-include '../includes/whatsapp.php';
 $owner_nama = $_SESSION['owner_nama'] ?? 'Owner Executive';
 
 // Proses Approval / Rejection
@@ -51,11 +50,6 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
             $periode_str = '';
             if (!empty($tgl_mulai) && !empty($tgl_selesai)) {
                 $periode_str = date('d/m/Y', strtotime($tgl_mulai)) . ' s/d ' . date('d/m/Y', strtotime($tgl_selesai));
-            }
-
-            // Kirim WA ke karyawan
-            if (!empty($no_hp)) {
-                notifApprovalWA($no_hp, $nama_kar, $jenis, $status, $periode_str);
             }
 
             // Simpan ke tb_notifikasi (bell icon karyawan)
