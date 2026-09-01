@@ -37,12 +37,11 @@ if ($type === 'karyawan') {
             <thead>
                 <tr>
                     <th style="width: 40px;">No</th>
-                    <th>ID / Tanggal Masuk</th>
                     <th>Nama Lengkap</th>
                     <th>Jabatan</th>
                     <th>Jenis Kelamin</th>
                     <th>No. Telepon</th>
-                    <th>Tanggal Masuk Resmi</th>
+                    <th>Tanggal Masuk</th>
                     <th>Masa Kerja</th>
                 </tr>
             </thead>
@@ -50,19 +49,17 @@ if ($type === 'karyawan') {
                 <?php
                 $no = 1;
                 while ($r = mysqli_fetch_assoc($query)) {
-                    $tgl_masuk = $r['tgl_masuk'] ?? '';
-                    $masa_kerja = !empty($tgl_masuk) ? hitungMasaKerja($tgl_masuk) : '-';
-                    $tgl_format = !empty($tgl_masuk) ? date('d/m/Y', strtotime($tgl_masuk)) : '-';
+                    $tgl_format = getFormattedTglMasuk($r);
+                    $masa_kerja = hitungMasaKerja($r);
                 ?>
                 <tr>
                     <td style="text-align: center;"><?= $no++ ?></td>
-                    <td style="mso-number-format:'\@'; text-align: center;"><?= htmlspecialchars($r['id_karyawan']) ?></td>
                     <td><b><?= htmlspecialchars($r['nama']) ?></b></td>
                     <td class="badge-pos"><?= htmlspecialchars($r['jabatan']) ?></td>
                     <td style="text-align: center;"><?= htmlspecialchars($r['jenkel']) ?></td>
                     <td style="mso-number-format:'\@';"><?= htmlspecialchars($r['no_tel']) ?></td>
                     <td style="text-align: center;"><?= $tgl_format ?></td>
-                    <td style="text-align: center; font-weight: bold;"><?= $masa_kerja ?></td>
+                    <td style="text-align: center; font-weight: bold; color: #059669;"><?= $masa_kerja ?></td>
                 </tr>
                 <?php } ?>
             </tbody>

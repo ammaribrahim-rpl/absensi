@@ -10,16 +10,37 @@ $owner_nama = $_SESSION['owner_nama'] ?? 'Owner Executive';
 // Handle Tambah Karyawan via Owner
 $pesan = '';
 if (isset($_POST['simpan_karyawan'])) {
-    $id_karyawan   = trim($_POST['id_karyawan']);
     $username_kar  = trim($_POST['username']);
     $password_kar  = password_hash($_POST['password'], PASSWORD_DEFAULT);
     $nama_kar      = trim($_POST['nama']);
     $jenkel        = $_POST['jenkel'];
     $no_tel        = trim($_POST['no_tel']);
     $jabatan       = $_POST['jabatan'];
-    $tgl_masuk     = $_POST['tgl_masuk'];
+    $tgl_masuk_raw = trim($_POST['tgl_masuk'] ?? date('Y-m-d'));
 
-    $cek = mysqli_query($koneksi, "SELECT id_karyawan FROM tb_karyawan WHERE id_karyawan='$id_karyawan' OR username='$username_kar'");
+    // Normalisasi tanggal ke YYYY-MM-DD
+    $tgl_masuk = date('Y-m-d');
+    if (preg_match('/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})/', $tgl_masuk_raw, $m)) {
+        $tgl_masuk = sprintf('%04d-%02d-%02d', $m[3], $m[2], $m[1]);
+    } elseif (strtotime($tgl_masuk_raw)) {
+        $tgl_masuk = date('Y-m-d', strtotime($tgl_masuk_raw));
+    }
+
+    // Auto-generate ID Karyawan jika kosong
+    $id_karyawan = trim($_POST['id_karyawan'] ?? '');
+    if (empty($id_karyawan)) {
+        $base_id = date('d-m-Y', strtotime($tgl_masuk));
+        $id_karyawan = $base_id;
+        $cek_id = mysqli_query($koneksi, "SELECT id_karyawan FROM tb_karyawan WHERE id_karyawan = '$id_karyawan'");
+        $suffix = 1;
+        while (mysqli_num_rows($cek_id) > 0) {
+            $id_karyawan = $base_id . '-' . $suffix;
+            $cek_id = mysqli_query($koneksi, "SELECT id_karyawan FROM tb_karyawan WHERE id_karyawan = '$id_karyawan'");
+            $suffix++;
+        }
+    }
+
+    $cek = mysqli_query($koneksi, "SELECT id_karyawan FROM tb_karyawan WHERE username='$username_kar'");
     if (mysqli_num_rows($cek) > 0) {
         $pesan = 'error_duplikat';
     } else {
@@ -85,6 +106,60 @@ $q_list = mysqli_query($koneksi, $sql_list);
         .avatar-owner {
             background-color: #7e22ce !important;
             color: #ffffff !important;
+        }
+        .table-responsive {
+            background: #ffffff;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+        }
+
+        /* ── Compact Table Styling ── */
+        .table-compact {
+            width: 100%;
+            margin-bottom: 0 !important;
+        }
+        .table-compact th {
+            font-size: 0.7rem !important;
+            font-weight: 700 !important;
+            letter-spacing: 0.04em !important;
+            text-transform: uppercase !important;
+            color: #6b7280 !important;
+            padding: 10px 10px !important;
+            white-space: nowrap !important;
+            background: #f8fafc !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+            border-top: none !important;
+        }
+        .table-compact td {
+            font-size: 0.8rem !important;
+            padding: 9px 10px !important;
+            vertical-align: middle !important;
+            border-top: 1px solid #f1f5f9 !important;
+            color: #1e2228 !important;
+        }
+        .avatar-initial-compact {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            border-radius: 50%;
+            background: #eef2ff;
+            color: #4f46e5;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+        .btn-action-compact {
+            padding: 4px 8px !important;
+            font-size: 0.73rem !important;
+            font-weight: 600 !important;
+            border-radius: 6px !important;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            line-height: 1.2 !important;
         }
     </style>
 </head>
@@ -240,18 +315,17 @@ $q_list = mysqli_query($koneksi, $sql_list);
                                 </h5>
                             </div>
                             <div class="table-responsive">
-                                <table class="table">
+                                <table class="table table-compact">
                                     <thead>
                                         <tr>
-                                            <th>No</th>
-                                            <th>ID Karyawan</th>
-                                            <th>Nama Lengkap</th>
-                                            <th>Jenis Kelamin</th>
-                                            <th>No. Telepon</th>
-                                            <th>Jabatan</th>
-                                            <th>Tgl Masuk</th>
-                                            <th>Masa Kerja</th>
-                                            <th class="text-center">Aksi</th>
+                                            <th style="width: 38px; text-align: center;">No</th>
+                                            <th style="width: 24%;">Nama Karyawan</th>
+                                            <th style="width: 15%;">Jabatan</th>
+                                            <th style="width: 11%; text-align: center;">Jenis Kelamin</th>
+                                            <th style="width: 14%;">No. Telepon</th>
+                                            <th style="width: 13%;">Tanggal Masuk</th>
+                                            <th style="width: 14%;">Masa Kerja</th>
+                                            <th style="width: 100px; text-align: center;">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -259,43 +333,49 @@ $q_list = mysqli_query($koneksi, $sql_list);
                                         if (mysqli_num_rows($q_list) == 0):
                                         ?>
                                         <tr>
-                                            <td colspan="9" class="text-center py-4 text-muted">Tidak ada data karyawan yang ditemukan.</td>
+                                            <td colspan="8" class="text-center py-4 text-muted">Tidak ada data karyawan yang ditemukan.</td>
                                         </tr>
                                         <?php
                                         endif;
                                         $no = 1;
                                         while ($row = mysqli_fetch_assoc($q_list)):
-                                            $tgl_masuk = $row['tgl_masuk'] ?? '';
-                                            $masa_kerja = !empty($tgl_masuk) ? hitungMasaKerja($tgl_masuk) : '-';
-                                            $tgl_format = !empty($tgl_masuk) ? date('d/m/Y', strtotime($tgl_masuk)) : '-';
+                                            $tgl_masuk_fmt = getFormattedTglMasuk($row);
+                                            $masa_kerja = hitungMasaKerja($row);
                                             $icon_cls = getJabatanIcon($row['jabatan']);
                                         ?>
                                         <tr>
-                                            <td><?= $no++ ?></td>
-                                            <td class="font-weight-bold text-primary"><?= htmlspecialchars($row['id_karyawan']) ?></td>
+                                            <td style="text-align: center; color:#6b7280; font-weight:600;"><?= $no++ ?></td>
                                             <td>
                                                 <div class="d-flex align-items-center">
-                                                    <div class="avatar-initial avatar-sm mr-2"><?= strtoupper(substr($row['nama'], 0, 1)) ?></div>
+                                                    <div class="avatar-initial-compact mr-2"><?= strtoupper(substr($row['nama'], 0, 1)) ?></div>
                                                     <div>
-                                                        <strong><?= htmlspecialchars($row['nama']) ?></strong>
-                                                        <br><small class="text-muted">@<?= htmlspecialchars($row['username']) ?></small>
+                                                        <span class="font-weight-bold text-dark d-block" style="font-size:0.82rem;"><?= htmlspecialchars($row['nama']) ?></span>
+                                                        <small class="text-muted" style="font-size:0.7rem;">@<?= htmlspecialchars($row['username']) ?></small>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td><span class="badge-modern bg-light text-dark border"><?= htmlspecialchars($row['jenkel']) ?></span></td>
-                                            <td><?= htmlspecialchars($row['no_tel']) ?></td>
                                             <td>
-                                                <span class="badge-modern badge-jabatan">
+                                                <span class="badge-modern badge-jabatan" style="font-size:0.72rem; padding:3px 8px;">
                                                     <i class="<?= htmlspecialchars($icon_cls) ?> mr-1"></i> <?= htmlspecialchars($row['jabatan']) ?>
                                                 </span>
                                             </td>
-                                            <td><?= $tgl_format ?></td>
-                                            <td><strong style="color: #059669;"><?= $masa_kerja ?></strong></td>
-                                            <td class="text-center" style="white-space: nowrap;">
-                                                <a href="../admin/karyawan_edit.php?id=<?= urlencode($row['id_karyawan']) ?>" class="btn btn-sm btn-warning font-weight-bold mr-1">
+                                            <td style="text-align: center;"><span class="badge-modern bg-light text-dark border" style="font-size:0.7rem; padding:2px 6px;"><?= htmlspecialchars($row['jenkel']) ?></span></td>
+                                            <td style="font-size:0.78rem; color:#4b5563;"><?= htmlspecialchars($row['no_tel']) ?></td>
+                                            <td>
+                                                <span class="font-weight-bold text-dark d-block" style="font-size:0.78rem;">
+                                                    <i class="fas fa-calendar-alt text-muted mr-1" style="font-size:0.7rem;"></i> <?= $tgl_masuk_fmt ?>
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="badge" style="background:#ecfdf5; color:#059669; border:1px solid #a7f3d0; font-weight:700; font-size:0.72rem; padding:3px 8px; border-radius:6px;">
+                                                    <i class="fas fa-business-time mr-1"></i> <?= $masa_kerja ?>
+                                                </span>
+                                            </td>
+                                            <td style="text-align: center; white-space: nowrap;">
+                                                <a href="../admin/karyawan_edit.php?id=<?= urlencode($row['id_karyawan']) ?>" class="btn btn-warning btn-action-compact mr-1" title="Edit">
                                                     <i class="fas fa-edit"></i> Edit
                                                 </a>
-                                                <a href="karyawan.php?hapus_id=<?= urlencode($row['id_karyawan']) ?>" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus data karyawan <?= htmlspecialchars(addslashes($row['nama'])) ?>?');">
+                                                <a href="karyawan.php?hapus_id=<?= urlencode($row['id_karyawan']) ?>" class="btn btn-danger btn-action-compact" onclick="return confirm('Apakah Anda yakin ingin menghapus data karyawan <?= htmlspecialchars(addslashes($row['nama'])) ?>?');" title="Hapus">
                                                     <i class="fas fa-trash"></i> Hapus
                                                 </a>
                                             </td>
@@ -324,8 +404,8 @@ $q_list = mysqli_query($koneksi, $sql_list);
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-md-6 form-group">
-                                <label class="font-weight-bold text-muted small">ID KARYAWAN (Angka/Kode)</label>
-                                <input type="text" class="form-control" name="id_karyawan" placeholder="Contoh: 10829102" required>
+                                <label class="font-weight-bold text-muted small">TANGGAL MASUK BEKERJA</label>
+                                <input type="date" class="form-control" name="tgl_masuk" value="<?= date('Y-m-d') ?>" required>
                             </div>
                             <div class="col-md-6 form-group">
                                 <label class="font-weight-bold text-muted small">NAMA LENGKAP</label>
@@ -351,10 +431,6 @@ $q_list = mysqli_query($koneksi, $sql_list);
                                 <input type="text" class="form-control" name="no_tel" placeholder="Contoh: 081234567890" required>
                             </div>
                             <div class="col-md-6 form-group">
-                                <label class="font-weight-bold text-muted small">TANGGAL MASUK BEKERJA</label>
-                                <input type="date" class="form-control" name="tgl_masuk" value="<?= date('Y-m-d') ?>" required>
-                            </div>
-                            <div class="col-md-6 form-group">
                                 <label class="font-weight-bold text-muted small">POSISI / JABATAN</label>
                                 <select name="jabatan" class="form-control" required>
                                     <?php
@@ -364,6 +440,10 @@ $q_list = mysqli_query($koneksi, $sql_list);
                                     }
                                     ?>
                                 </select>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label class="font-weight-bold text-muted small">ID KARYAWAN <span class="text-muted font-weight-normal">(Opsional - Otomatis)</span></label>
+                                <input type="text" class="form-control" name="id_karyawan" placeholder="Otomatis jika dikosongkan">
                             </div>
                         </div>
                     </div>

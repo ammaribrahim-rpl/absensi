@@ -154,7 +154,6 @@ $date_now = date('d F Y, H:i') . ' WIB';
             <thead>
                 <tr>
                     <th style="width: 30px; text-align: center;">No</th>
-                    <th>ID Karyawan</th>
                     <th>Nama Lengkap</th>
                     <th>Jabatan</th>
                     <th style="text-align: center;">L/P</th>
@@ -167,19 +166,17 @@ $date_now = date('d F Y, H:i') . ' WIB';
                 <?php
                 $no = 1;
                 while ($r = mysqli_fetch_assoc($query)) {
-                    $tgl_masuk = $r['tgl_masuk'] ?? '';
-                    $masa_kerja = !empty($tgl_masuk) ? hitungMasaKerja($tgl_masuk) : '-';
-                    $tgl_format = !empty($tgl_masuk) ? date('d/m/Y', strtotime($tgl_masuk)) : '-';
+                    $tgl_format = getFormattedTglMasuk($r);
+                    $masa_kerja = hitungMasaKerja($r);
                 ?>
                 <tr>
                     <td style="text-align: center;"><?= $no++ ?></td>
-                    <td style="font-weight: bold;"><?= htmlspecialchars($r['id_karyawan']) ?></td>
                     <td><strong><?= htmlspecialchars($r['nama']) ?></strong></td>
                     <td><?= htmlspecialchars($r['jabatan']) ?></td>
                     <td style="text-align: center;"><?= htmlspecialchars($r['jenkel']) ?></td>
                     <td><?= htmlspecialchars($r['no_tel']) ?></td>
                     <td style="text-align: center;"><?= $tgl_format ?></td>
-                    <td style="text-align: center; font-weight: 600; color: #4f46e5;"><?= $masa_kerja ?></td>
+                    <td style="text-align: center; font-weight: 700; color: #059669;"><?= $masa_kerja ?></td>
                 </tr>
                 <?php } ?>
             </tbody>

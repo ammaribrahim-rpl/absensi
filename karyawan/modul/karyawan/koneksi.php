@@ -1,10 +1,24 @@
 <?php 
 $koneksi = mysqli_connect("127.0.0.1", "root", "", "karyawansi", 8080, "/Applications/XAMPP/xamppfiles/var/mysql/mysql.sock");
 
+if (!function_exists('resolveTglMasuk')) {
+    function resolveTglMasuk($row_or_tgl, $fallback_id = '') {
+        if (is_array($row_or_tgl)) {
+            $tgl = trim($row_or_tgl['tgl_masuk'] ?? '');
+            if (!empty($tgl) && $tgl !== '0000-00-00' && $tgl !== '-') return $tgl;
+            return trim($row_or_tgl['id_karyawan'] ?? '');
+        }
+        $tgl = trim((string)$row_or_tgl);
+        if (!empty($tgl) && $tgl !== '0000-00-00' && $tgl !== '-') return $tgl;
+        return trim((string)$fallback_id);
+    }
+}
+
 if (!function_exists('hitungMasaKerja')) {
-    function hitungMasaKerja($tgl_masuk) {
-        if (empty($tgl_masuk)) return '-';
-        $tgl_clean = trim($tgl_masuk);
+    function hitungMasaKerja($tgl_masuk, $fallback_id = '') {
+        $tgl = resolveTglMasuk($tgl_masuk, $fallback_id);
+        if (empty($tgl)) return '-';
+        $tgl_clean = trim($tgl);
         // Abaikan suffix seperti "-1", "-2" pada id_karyawan format tanggal
         if (preg_match('/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})/', $tgl_clean, $m)) {
             $tgl_clean = sprintf('%04d-%02d-%02d', $m[3], $m[2], $m[1]);
@@ -12,9 +26,14 @@ if (!function_exists('hitungMasaKerja')) {
         try {
             $masuk = new DateTime($tgl_clean);
             $sekarang = new DateTime();
-            if ($masuk > $sekarang) return '0 Tahun 0 Bulan';
+            if ($masuk > $sekarang) return 'Baru Bergabung';
             $diff = $sekarang->diff($masuk);
-            return $diff->y . " Tahun " . $diff->m . " Bulan";
+            $y = $diff->y;
+            $m = $diff->m;
+            if ($y == 0 && $m == 0) return 'Baru Bergabung';
+            if ($y == 0) return $m . " Bulan";
+            if ($m == 0) return $y . " Tahun";
+            return $y . " Tahun " . $m . " Bulan";
         } catch (Exception $e) {
             return '-';
         }
@@ -22,16 +41,17 @@ if (!function_exists('hitungMasaKerja')) {
 }
 
 if (!function_exists('getFormattedTglMasuk')) {
-    function getFormattedTglMasuk($raw) {
-        if (empty($raw)) return '-';
-        $raw = trim($raw);
+    function getFormattedTglMasuk($raw, $fallback_id = '') {
+        $val = resolveTglMasuk($raw, $fallback_id);
+        if (empty($val)) return '-';
+        $val = trim($val);
         // Abaikan suffix -1, -2 dst
-        if (preg_match('/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})/', $raw, $m)) {
+        if (preg_match('/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})/', $val, $m)) {
             return sprintf('%02d-%02d-%04d', $m[1], $m[2], $m[3]);
         }
-        $ts = strtotime($raw);
+        $ts = strtotime($val);
         if ($ts) return date('d-m-Y', $ts);
-        return $raw;
+        return $val;
     }
 }
 
